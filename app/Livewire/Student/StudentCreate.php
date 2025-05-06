@@ -1,7 +1,5 @@
 <?php
-
 namespace App\Livewire\Student;
-
 use App\Models\Student;
 use Livewire\Component;
 
