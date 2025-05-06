@@ -4,7 +4,7 @@ namespace App\Livewire\Student;
 
 use Livewire\Component;
 
-class StudentIndex extends Component
+class studentIndex extends Component
 {
     public function render()
     {
