@@ -1,7 +1,7 @@
 <div>
 <div class="relative mb-6 w-full">
-  <h1 class="text-2xl font-bold">Create Students</h1>
-  <p class="text-lg text-gray-600 mb-4">create student form</p>
+  <h1 class="text-2xl font-bold">Delete Students</h1>
+  <p class="text-lg text-gray-600 mb-4">edit student form</p>
   <hr class="border-gray-200" />
 </div>
 

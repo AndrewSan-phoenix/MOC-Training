@@ -22,7 +22,7 @@ Route::view('dashboard', 'dashboard')
 Route::middleware(['auth'])->group(function () {
     Route::redirect('settings', 'settings/profile');
 
-    Route::get("/student",StudentIndex::class)->name("student.index");
+    // Route::get("/student",StudentIndex::class)->name("student.index");
     Route::get("/student/create",StudentCreate::class)->name("student.create");
     Route::get("/student/{id}/edit",StudentEdit::class)->name("student.edit");
     Route::get("/student",StudentManagement::class)->name("student");
