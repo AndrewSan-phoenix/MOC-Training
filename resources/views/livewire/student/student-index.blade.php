@@ -10,35 +10,56 @@
     Create User
 </a>
 </div>
+@if (session()->has('success'))
+<div class="alert alert-success d-flex align-items-center" role="alert">
+    <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Success:">
+        <use xlink:href="#check-circle-fill"/>
+    </svg>
+    <span class="font-medium">
+        {{ session('success') }}
+    </span>
+</div>
+@endif
 
+
+  
+ 
 <div class="overflow-x-auto">
   <table class="min-w-full bg-white border border-gray-200">
     <thead>
       <tr class="bg-gray-100 text-left text-sm font-semibold text-gray-700">
+       
         <th class="px-4 py-2">Name</th>
-        <th class="px-4 py-2">Date of Birth</th>
+        <th class="px-4 py-2">DOB</th>
         <th class="px-4 py-2">Gender</th>
         <th class="px-4 py-2">NRC</th>
         <th class="px-4 py-2">Phone</th>
         <th class="px-4 py-2">Email</th>
         <th class="px-4 py-2">Address</th>
-        <th class="px-4 py-2">Actions</th>
+        <th class="px-4 py-2">Action</th>
       </tr>
     </thead>
+    @foreach ($students as $student)
     <tbody class="text-sm text-gray-700">
       <tr class="border-t">
-        <td class="px-4 py-2">John Doe</td>
-        <td class="px-4 py-2">2000-01-01</td>
-        <td class="px-4 py-2">Male</td>
-        <td class="px-4 py-2">12/MaYa(N)123456</td>
-        <td class="px-4 py-2">09123456789</td>
-        <td class="px-4 py-2">john@example.com</td>
-        <td class="px-4 py-2">Yangon</td>
+        
+        <td class="px-4 py-2">{{$student->name}}</td>
+        <td class="px-4 py-2">{{$student->dob}}</td>
+        <td class="px-4 py-2">@if ($student->gender == 1)
+          <span class="text">Male</span>
+          @elseif ($student->gender == 2)
+          <span class="text">Female</span>
+        @endif</td>
+        <td class="px-4 py-2">{{$student->nrc}}</td>
+        <td class="px-4 py-2">{{$student->phone}}</td>
+        <td class="px-4 py-2">{{$student->email}}</td>
+        <td class="px-4 py-2">{{$student->address}}</td>
         <td class="px-4 py-2 space-x-2">
-          <a href="#" class="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600">Edit</a>
-          <a href="#" class="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600">Delete</a>
+          <a href="{{route('student.edit',$student->id)}}" class="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600">Edit</a>
+          <button wire:click="delete({{$student->id}})" wire:confirm="Are you sure you want to delete" class="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600">Delete</button>
         </td>
       </tr>
+      @endforeach
       <!-- More student rows can be added here -->
     </tbody>
   </table>

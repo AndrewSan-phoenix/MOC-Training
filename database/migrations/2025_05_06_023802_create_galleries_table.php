@@ -11,11 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('roletypes', function (Blueprint $table) {
+        Schema::create('galleries', function (Blueprint $table) {
             $table->id();
-            $table->string('name')->unique();
+            $table->string('file_name');
+            $table->text('description')->nullable();
+            $table->foreignId('batch_id')->constrained()->onDelete('cascade');
             $table->timestamps();
         });
+        
     }
 
     /**

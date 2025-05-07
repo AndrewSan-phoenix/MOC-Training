@@ -5,31 +5,31 @@ use Livewire\Component;
 
 class StudentCreate extends Component
 {
-    public $Studentname, $DOB, $Gender, $NRC, $Phone, $Email, $Address;
+    public $name, $dob, $gender, $nrc, $phone, $email, $address;
     public function render()
     {
         return view('livewire.student.student-create');
     }
     public function submit(){
         $this->validate([
-        "Studentname"=>"required",
-        "DOB"=>"required",
-        "Gender"=>"required",
-        "NRC"=>"required",
-        "Phone"=>"required|unique:student,Phone",
-        "Email"=>"required|email",
-        "Address"=>"required"
+        'name' => 'required',
+        'dob' => 'required|date',
+        'gender' => 'required',
+        'nrc' => 'required',
+        'phone' => 'required|unique:students,phone',
+        'email' => 'required|email',
+        'address' => 'required'
         ]);
         Student::create([
-            "Studentname"=>$this->Studentname,
-            "DOB"=>$this->DOB,
-            "Gender"=>$this->Geneder,
-            "NRC"=>$this->NRC,
-            "Phone"=>$this->Phone,
-            "Email"=>$this->Email,
-            "Address"=>$this->Address
+            'name' => $this->name,
+            'dob' => $this->dob,
+            'gender' => $this->gender,
+            'nrc' => $this->nrc,
+            'phone' => $this->phone,
+            'email' => $this->email,
+            'address' => $this->address
         ]);
-        return to_route('student.index')->with('message', 'Student Created Successfully');
+        return to_route('student.index')->with('success', 'Student Created Successfully');
     }
    
 

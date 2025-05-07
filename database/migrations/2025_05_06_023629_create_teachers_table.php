@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('position');
             $table->string('organization')->nullable();
             $table->date('dob');
-            $table->string('gender');
+            $table->tinyInteger('gender')->comment('1 => male, 2 => female');
             $table->string('nrc')->unique();
             $table->string('phone')->unique();
             $table->string('email')->unique();
