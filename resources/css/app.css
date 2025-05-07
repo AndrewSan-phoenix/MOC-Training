@@ -3,47 +3,85 @@
 
 @source '../views';
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
-@source '../../vendor/livewire/flux-pro/stubs/**/*.blade.php';
+@source '../../vendor/livewire/flux-pro/stubs*.blade.php';
 @source '../../vendor/livewire/flux/stubs/**/*.blade.php';
 
-@custom-variant dark (&:where(.dark, .dark *));
-
 @theme {
-    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+    --font-sans: 'Arial', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
 
-    --color-zinc-50: #fafafa;
-    --color-zinc-100: #f5f5f5;
-    --color-zinc-200: #e5e5e5;
-    --color-zinc-300: #d4d4d4;
-    --color-zinc-400: #a3a3a3;
-    --color-zinc-500: #737373;
-    --color-zinc-600: #525252;
-    --color-zinc-700: #404040;
-    --color-zinc-800: #262626;
-    --color-zinc-900: #171717;
-    --color-zinc-950: #0a0a0a;
+    /* Colors from commerce.gov.mm with Bootstrap-like names */
+    --color-light: #FFFFFF;
+    --color-primary: #003087;
+    --color-info: #005BAC;
+    --color-dark: #333333;
+    --color-secondary: #666666;
+    --color-gray: #CCCCCC;
 
-    --color-accent: var(--color-neutral-800);
-    --color-accent-content: var(--color-neutral-800);
-    --color-accent-foreground: var(--color-white);
-}
+    /* Gray palette (replacing zinc) for additional UI elements */
+    --color-gray-50: #fafafa;
+    --color-gray-100: #f5f5f5;
+    --color-gray-200: #e5e5e5;
+    --color-gray-300: #d4d4d4;
+    --color-gray-400: #a3a3a3;
+    --color-gray-500: #737373;
+    --color-gray-600: #525252;
+    --color-gray-700: #404040;
+    --color-gray-800: #262626;
+    --color-gray-900: #171717;
+    --color-gray-950: #0a0a0a;
 
-@layer theme {
-    .dark {
-        --color-accent: var(--color-white);
-        --color-accent-content: var(--color-white);
-        --color-accent-foreground: var(--color-neutral-800);
-    }
+    /* Accent colors with Bootstrap-like names */
+    --color-accent: var(--color-info);
+    --color-accent-content: var(--color-primary);
+    --color-accent-foreground: var(--color-light);
 }
 
 @layer base {
+    /* Force light mode on all elements */
+    :root, html, body, [data-theme] {
+        color-scheme: light;
+        background-color: var(--color-light);
+        color: var(--color-dark);
+    }
+
+    /* Explicitly disable dark mode styles */
+    .dark, [class*="dark:"] {
+        background-color: var(--color-light) !important;
+        color: var(--color-dark) !important;
+    }
+
+    /* Override system dark mode */
+    @media (prefers-color-scheme: dark) {
+        :root, html, body {
+            color-scheme: light;
+            background-color: var(--color-light);
+            color: var(--color-dark);
+        }
+    }
 
     *,
     ::after,
     ::before,
     ::backdrop,
     ::file-selector-button {
-        border-color: var(--color-gray-200, currentColor);
+        border-color: var(--color-gray, currentColor);
+    }
+
+    /* Base typography and styles */
+    body {
+        @apply bg-light text-dark font-sans;
+    }
+
+    h1, h2, h3, h4, h5, h6 {
+        @apply text-primary font-bold;
+    }
+
+    a {
+        @apply text-info hover:text-primary transition-colors;
+    }
+
+    button {
+        @apply bg-info text-light px-4 py-2 rounded-md hover:bg-primary transition-colors;
     }
 }
 
@@ -52,15 +90,15 @@
 }
 
 [data-flux-label] {
-    @apply  !mb-0 !leading-tight;
+    @apply !mb-0 !leading-tight;
 }
 
 input:focus[data-flux-control],
 textarea:focus[data-flux-control],
 select:focus[data-flux-control] {
-    @apply outline-hidden ring-2 ring-accent ring-offset-2 ring-offset-accent-foreground;
+    @apply outline-none ring-2 ring-info ring-offset-2 ring-offset-light;
 }
 
 /* \[:where(&)\]:size-4 {
     @apply size-4;
-} */
+} */    
