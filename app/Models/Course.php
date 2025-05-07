@@ -6,10 +6,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class Course extends Model
 {
-    protected $fillable = ['name'];
+protected $fillable = ['name'];
 
-    public function batches()
-    {
-        return $this->hasMany(Batch::class);
-    }
+public function batches()
+{
+    return $this->hasMany(Batch::class);
+}
 }

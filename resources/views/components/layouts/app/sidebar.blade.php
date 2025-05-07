@@ -8,13 +8,17 @@
             <flux:sidebar.toggle class="lg:hidden" icon="x-mark" />
 
             <a href="{{ route('dashboard') }}" class="me-5 flex items-center space-x-2 rtl:space-x-reverse" wire:navigate>
-           
+
             </a>
 
             <flux:navlist variant="outline">
                 <flux:navlist.group :heading="__('Platform')" class="grid">
                     <flux:navlist.item icon="home" :href="route('dashboard')" :current="request()->routeIs('dashboard')" wire:navigate>{{ __('Dashboard') }}</flux:navlist.item>
-                    <flux:navlist.item icon="users" :href="route('student.index')" :current="request()->routeIs('student.index')" wire:navigate>{{ __('Students') }}</flux:navlist.item>
+                    <flux:navlist.item icon="users" :href="route('student')" :current="request()->routeIs('student')" wire:navigate>{{ __('Students') }}</flux:navlist.item>
+                    <flux:navlist.item icon="users" :href="route('teacher')" :current="request()->routeIs('teacher')" wire:navigate>{{ __('Teacher') }}</flux:navlist.item>
+                    <flux:navlist.item icon="users" :href="route('batch')" :current="request()->routeIs('batch')" wire:navigate>{{ __('Batch') }}</flux:navlist.item>
+                    <flux:navlist.item icon="users" :href="route('course')" :current="request()->routeIs('course')" wire:navigate>{{ __('Course') }}</flux:navlist.item>
+                    <flux:navlist.item icon="users" :href="route('enroll')" :current="request()->routeIs('enroll')" wire:navigate>{{ __('Enroll') }}</flux:navlist.item>
 
                 </flux:navlist.group>
             </flux:navlist>
