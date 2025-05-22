@@ -47,7 +47,7 @@ new #[Layout('components.layouts.auth')] class extends Component {
         //    return redirect()->route('admin.dashboard')->with('success', 'Login in successfully Admin Dashboard');
         // }
 
-        $this->redirectIntended(default: route('dashboard', absolute: false), navigate: true);
+        $this->redirectIntended(default: route('dashboard', absolute: false), navigate: false);
     }
 
     /**
