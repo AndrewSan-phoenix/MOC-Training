@@ -1,0 +1,113 @@
+@import 'tailwindcss';
+@import '../../vendor/livewire/flux/dist/flux.css';
+
+@source '../views';
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../vendor/livewire/flux-pro/stubs*.blade.php';
+@source '../../vendor/livewire/flux/stubs/**/*.blade.php';
+
+@theme {
+    --font-sans: 'Arial', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+
+    /* Colors from commerce.gov.mm with Bootstrap-like names */
+    --color-light: #FFFFFF;
+    --color-primary: #003087;
+    --color-info: #005BAC;
+    --color-dark: #333333;
+    --color-secondary: #666666;
+    --color-gray: #CCCCCC;
+
+    /* Gray palette (replacing zinc) for additional UI elements */
+    --color-gray-50: #fafafa;
+    --color-gray-100: #f5f5f5;
+    --color-gray-200: #e5e5e5;
+    --color-gray-300: #d4d4d4;
+    --color-gray-400: #a3a3a3;
+    --color-gray-500: #737373;
+    --color-gray-600: #525252;
+    --color-gray-700: #404040;
+    --color-gray-800: #262626;
+    --color-gray-900: #171717;
+    --color-gray-950: #0a0a0a;
+
+    /* Accent colors with Bootstrap-like names */
+    --color-accent: var(--color-info);
+    --color-accent-content: var(--color-primary);
+    --color-accent-foreground: var(--color-light);
+}
+
+@layer base {
+    /* Force light mode on all elements */
+    :root, html, body, [data-theme] {
+        color-scheme: light;
+        background-color: var(--color-light);
+        color: var(--color-dark);
+    }
+
+    /* Explicitly disable dark mode styles */
+    .dark, [class*="dark:"] {
+        background-color: var(--color-light) !important;
+        color: var(--color-dark) !important;
+    }
+
+    /* Override system dark mode */
+    @media (prefers-color-scheme: dark) {
+        :root, html, body {
+            color-scheme: light;
+            background-color: var(--color-light);
+            color: var(--color-dark);
+        }
+    }
+
+    *,
+    ::after,
+    ::before,
+    ::backdrop,
+    ::file-selector-button {
+        border-color: var(--color-gray, currentColor);
+    }
+
+    /* Base typography and styles */
+    body {
+        @apply bg-light text-dark font-sans;
+    }
+
+    h1, h2, h3, h4, h5, h6 {
+        @apply text-primary font-bold;
+    }
+
+    a {
+        @apply text-info hover:text-primary transition-colors;
+    }
+
+    button {
+        @apply bg-info text-light px-4 py-2 rounded-md hover:bg-primary transition-colors;
+    }
+}
+
+[data-flux-field]:not(ui-radio, ui-checkbox) {
+    @apply grid gap-2;
+}
+
+[data-flux-label] {
+    @apply !mb-0 !leading-tight;
+}
+
+input:focus[data-flux-control],
+textarea:focus[data-flux-control],
+select:focus[data-flux-control] {
+    @apply outline-none ring-2 ring-info ring-offset-2 ring-offset-light;
+}
+
+/* \[:where(&)\]:size-4 {
+    @apply size-4;
+} */
+
+
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+.animate-fadeInUp {
+    animation: fadeInUp 0.5s ease forwards;
+}

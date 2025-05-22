@@ -1,0 +1,34 @@
+name: Laravel CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.2'
+        extensions: mbstring, bcmath, xml, curl, mysql
+        coverage: none
+
+    - name: Deploy to server (only git pull)
+      env:
+        SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+        SSH_USER: ${{ secrets.SSH_USER }}
+        SSH_HOST: ${{ secrets.SSH_HOST }}
+      run: |
+        echo "$SSH_PRIVATE_KEY" > private_key
+        chmod 600 private_key
+        ssh -o StrictHostKeyChecking=no -i private_key $SSH_USER@$SSH_HOST << 'EOF'
+          cd /var/www/moc_training
+          git pull origin master
+        EOF
