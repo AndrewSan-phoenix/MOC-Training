@@ -123,16 +123,17 @@ class GalleryManagement extends Component
     }
     
 
-   
     public function render()
     {
-        $this->galleries = Gallery::with('batch')->get();
-        $query = Gallery::query();
-        if (!empty($this->searchBatchId)) {
-               $query->where('batch_id', $this->searchBatchId);
-               $this->galleries = Gallery::where('batch_id',$this->searchBatchId)->get();
-           }
-           
+        // Always eager load batch and course for dropdown and display
+        $this->galleries = Gallery::with(['batch.course'])->when(
+            !empty($this->searchBatchId),
+            fn($q) => $q->where('batch_id', $this->searchBatchId)
+        )->get();
+
+        // For dropdown, eager load course for each batch
+        $this->batches = \App\Models\Batch::with('course')->get();
+
         return view('livewire.gallery-management');
     }
 }

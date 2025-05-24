@@ -3,7 +3,7 @@
 @section('content')
 
 @vite(['resources/css/app.css', 'resources/js/app.js'])
-<link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Inter:wght@400;700&display=swap" rel="stylesheet">
+
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
 
 <!-- Page Header -->
@@ -24,7 +24,7 @@
 <section class="bg-gray-50 py-16" style="margin-top:-0px;">
     <div class="max-w-6xl mx-auto px-4">
         <h2 class="text-3xl font-bold text-center mb-12">
-            Meet Our <span class="text-purple-600 script-font">Instructors</span>
+            Meet Our <span class="text-blue-700">Instructors</span>
         </h2>
 
         <!-- Combined Search & Dropdown in One Field -->
@@ -38,12 +38,12 @@
                     </svg>
                 </span>
                 <input
-                    id="combinedSearch"
-                    type="text"
-                    class="pl-12 pr-10 py-3 w-full rounded-full border border-purple-300 shadow focus:ring-2 focus:ring-purple-500 text-gray-700"
-                    placeholder="Search by batch or teacher name..."
-                    autocomplete="off"
-                />
+    id="combinedSearch"
+    type="text"
+    class="pl-12 pr-10 py-3 w-full rounded-full border border-purple-300 shadow focus:ring-2 focus:ring-purple-500 text-gray-700"
+    placeholder="Search by course, batch or teacher name..."
+    autocomplete="off"
+/>
                 <span class="absolute right-4 top-1/2 -translate-y-1/2 text-purple-500 cursor-pointer" id="dropdownIcon">
                     <!-- Down Arrow Icon -->
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -52,12 +52,15 @@
                 </span>
                 <!-- Dropdown menu, hidden by default -->
                 <div id="dropdownMenu" class="absolute left-0 right-0 top-14 bg-white border border-purple-200 rounded-xl shadow-lg z-20 max-h-60 overflow-auto hidden">
-                    <div class="py-2">
-                        <div class="px-6 py-2 hover:bg-purple-50 cursor-pointer batch-option" data-value="all">All</div>
-                        @foreach($allBatches as $batch)
-                            <div class="px-6 py-2 hover:bg-purple-50 cursor-pointer batch-option" data-value="{{ $batch->name }}">{{ $batch->name }}</div>
-                        @endforeach
-                    </div>
+                   <div class="py-2">
+    <div class="px-6 py-2 hover:bg-purple-50 cursor-pointer batch-option" data-value="all">All</div>
+    @foreach($allBatches as $batch)
+        <div class="px-6 py-2 hover:bg-purple-50 cursor-pointer batch-option"
+            data-value="{{ ($batch->course->name ?? 'No Course') . ' - ' . $batch->name }}">
+            {{ ($batch->course->name ?? 'No Course') . ' - ' . $batch->name }}
+        </div>
+    @endforeach
+</div>
                 </div>
             </div>
         </div>
@@ -69,7 +72,7 @@
                     @foreach($teachers as $teacher)
                         <div class="swiper-slide">
                             <div class="teacher-card bg-white p-6 rounded-2xl shadow-lg hover:shadow-2xl transition-all text-center"
-                                data-batches="@foreach($teacher->batchDetails as $bd){{ $bd->batch->name }};@endforeach">
+    data-batches="@foreach($teacher->batchDetails as $bd){{ ($bd->batch->course->name ?? 'No Course') . ' - ' . $bd->batch->name }};@endforeach">
                                 <div class="w-28 h-28 mx-auto rounded-full overflow-hidden border-4 border-purple-400 shadow mb-4">
                                     <img src="{{ $teacher->profile_image ? asset('storage/' . $teacher->profile_image) : asset('images/default-profile.png') }}"
                                         class="object-cover w-full h-full" alt="{{ $teacher->name }}">

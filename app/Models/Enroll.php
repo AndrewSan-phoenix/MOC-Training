@@ -5,7 +5,7 @@
 
     class Enroll extends Model
     {
-        protected $fillable = ['batch_id', 'student_id', 'enroll_date'];
+        protected $fillable = ['batch_id', 'student_id', 'enroll_date','course_id'];
         protected $table = 'enroll';
 
         public function student()
@@ -17,4 +17,13 @@
         {
             return $this->belongsTo(Batch::class);
         }
+         public function course()
+        {
+            return $this->belongsTo(Course::class);
+        }
+ 
+public function getBatchCourseAttribute()
+{
+    return ($this->batch->course->name ?? 'No Course') . ' - ' . ($this->batch->name ?? 'N/A');
+}
     }

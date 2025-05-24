@@ -119,7 +119,7 @@
                 ['label' => 'Profile Image', 'key' => 'profile_image'],
                 ['label' => 'Name', 'key' => 'name'],
                 ['label' => 'DOB', 'key' => 'dob'],
-                ['label' => 'Gender', 'key' => 'gender'],
+                ['label' => 'Gender', 'key' => 'gender_label'],
                 ['label' => 'NRC', 'key' => 'nrc'],
                 ['label' => 'Position', 'key' => 'position'],
                 ['label' => 'Organization', 'key' => 'organization'],

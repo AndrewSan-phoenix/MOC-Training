@@ -50,12 +50,12 @@
             <a href="{{ route('gallery_index') }}" class="block py-2 px-4 text-gray-700 hover:bg-blue-50 hover:text-blue-700 rounded-md transition-colors duration-300">Galleries</a>
            
             <!-- Mobile auth buttons -->
-            @auth
+            <!-- @auth
             <div class="grid grid-cols-2 gap-3 pt-2">
                 <a href="{{ route('login') }}" class="text-center py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md text-sm font-medium transition-all duration-300">Login</a>
                 <a href="{{ route('register') }}" class="text-center py-2 border border-blue-600 text-blue-600 hover:bg-blue-50 rounded-md text-sm font-medium transition-all duration-300">Register</a>
             </div>
-            @endauth
+            @endauth -->
         </div>
     </div>
 </header>

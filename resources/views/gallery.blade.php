@@ -4,9 +4,7 @@
 
 @vite(['resources/css/app.css', 'resources/js/app.js'])
 
-<!-- Font Awesome -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-<!-- SwiperJS for slider view -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
 
 <style>
@@ -22,20 +20,32 @@
         column-gap: 1rem;
     }
     .masonry-item {
-        break-inside: avoid;
-        margin-bottom: 1rem;
-        border-radius: 1rem;
-        overflow: hidden;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-        background: #fff;
-        transition: transform 0.3s, box-shadow 0.3s;
-        position: relative;
+        padding:0;
+        margin:0;
+        border:solid 7px #555;
+        max-width:600px;
+        margin:40px auto;
+        box-shadow:-3px -3px 12px #999;
     }
+
+    #border{
+        position:relative;
+        padding:0;
+        margin:0;
+        border:solid 10px white;
+        box-shadow:-3px -3px 12px #999;
+    }
+
     .masonry-item img {
-        width: 100%;
-        display: block;
+        padding:0;
+        margin:0;
+        width:100%;
+        height: auto;
+        border-top:solid 2px #aaa;
+        border-left:solid 2px #aaa;
+        border-bottom:solid 2px #ccc;
+        border-right:solid 2px #ccc;
         object-fit: cover;
-        height: 230px;
         transition: transform 0.4s;
     }
     .masonry-item:hover {
@@ -78,6 +88,15 @@
         display: flex;
         flex-direction: column;
         align-items: center;
+        opacity: 1;
+        transition: opacity 0.3s, transform 0.3s;
+    }
+    .swiper-slide.filtered-out {
+        opacity: 0;
+        width: 0 !important;
+        margin-right: 0 !important;
+        transform: scale(0.8);
+        pointer-events: none;
     }
     .swiper-slide img {
         width: 100%;
@@ -102,20 +121,22 @@
         opacity: 1;
     }
 
-    /* Blog View */
+    /* Blog View - 4 Columns */
     .blog-container {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 1.5rem;
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
         justify-content: center;
+        max-width: 1200px;
+        margin: 0 auto;
     }
     .blog-card {
         background: #fff;
         border-radius: 1rem;
         box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         overflow: hidden;
-        width: 350px;
-        margin-bottom: 1rem;
+        width: 100%;
+        max-width: 350px;
         display: flex;
         flex-direction: column;
     }
@@ -199,83 +220,121 @@
     .dropdown-list.active {
         display: block;
     }
+    .gallery-view {
+        display: none;
+    }
+    .gallery-view.active {
+        display: block;
+    }
 
+    /* Load More Button */
+    #loadMoreBtn {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 50px;
+        height: 50px;
+        background-color: #555; /* Example blue color */
+        color: white;
+        border-radius: 50%;
+        font-size: 1.5rem;
+        cursor: pointer;
+        margin: 2rem auto;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        transition: background-color 0.3s, transform 0.3s;
+    }
+
+    #loadMoreBtn:hover {
+        background-color: #000; /* Darker blue on hover */
+        transform: translateY(-2px);
+    }
+
+    #loadMoreBtn.loading {
+        background-color: #6c757d; /* Grey when loading */
+        cursor: not-allowed;
+    }
+
+
+    @media (max-width: 1200px) {
+        .blog-container { grid-template-columns: repeat(3, 1fr); }
+    }
     @media (max-width: 900px) {
         .masonry-container { column-count: 2; }
+        .blog-container { grid-template-columns: repeat(2, 1fr); }
     }
     @media (max-width: 600px) {
         .masonry-container { column-count: 1; }
         .search-combo { width: 100%; }
-        .blog-card { width: 100%; }
+        .blog-card { width: 100%; max-width: 100%; }
+        .blog-container { grid-template-columns: 1fr; }
+    }
+
+    /* Loading Indicator - for the initial load/after button click */
+    .loading-text {
+        text-align: center;
+        padding: 1rem;
+        display: none;
     }
 </style>
 
 <div class="gallery-container">
     <h1 class="text-3xl font-bold text-center text-primary mb-8">Gallery</h1>
 
-    <!-- Grid View Buttons -->
     <div class="header" id="myHeader">
         <h2 class="text-xl mb-2">Image Gallery Views</h2>
         <p class="mb-4">Choose a view:</p>
-        <button class="btn active" data-view="masonry" onclick="setGalleryView('masonry')">1</button>
-        <button class="btn" data-view="slider" onclick="setGalleryView('slider')">2</button>
-        <button class="btn" data-view="blog" onclick="setGalleryView('blog')">3</button>
+        <button class="btn active" data-view="masonry">1</button>
+        <button class="btn" data-view="slider">2</button>
+        <button class="btn" data-view="blog">3</button>
     </div>
 
-    <!-- Combined Search + Dropdown -->
     <div class="search-combo">
         <i class="fas fa-magnifying-glass" id="searchIcon" title="Search"></i>
-        <input type="text" id="searchInput" placeholder="Search by batch or description...">
+        <input type="text" id="searchInput" placeholder="Search by batch, course, or description...">
         <i class="fas fa-chevron-down" id="dropdownToggle" title="Select Batch"></i>
         <div class="dropdown-list" id="dropdownList">
-            <div data-value="all">All Batches</div>
+            <div data-value="all" class="text-left">All Batches</div>
             @foreach ($batches as $batch)
-                @if ($batch->galleries->count())
-                    <div data-value="batch-{{ $batch->id }}">{{ $batch->name }}</div>
+                @if ($batch->galleries->count() > 0) {{-- Only show batches that actually have galleries --}}
+                    <div data-value="{{ strtolower(($batch->course->name ?? 'No Course') . ' - ' . $batch->name) }}" class="text-left">
+                        {{ $batch->course->name ?? 'No Course' }} - {{ $batch->name }}
+                    </div>
                 @endif
             @endforeach
         </div>
     </div>
 
-    <!-- Masonry View -->
-    <div id="gallery-masonry" class="masonry-container gallery-view">
-        @foreach ($batches as $batch)
-            @if ($batch->galleries->count())
-                @foreach ($batch->galleries as $gallery)
-                    <div class="masonry-item"
-                        data-description="{{ strtolower($gallery->description) }}"
-                        data-batch="batch-{{ $batch->id }}"
-                        data-batchname="{{ strtolower($batch->name) }}">
-                        <img src="{{ asset('storage/' . $gallery->file_name) }}" alt="{{ $gallery->description }}">
-                        <div class="masonry-overlay">
-                            <h3>{{ $gallery->description }}</h3>
-                            <p>{{ $batch->name }}</p>
-                        </div>
+    <div id="gallery-masonry" class="masonry-container gallery-view active">
+        {{-- Initial galleries loaded by Laravel are here --}}
+        @foreach ($galleries as $gallery)
+            <div class="masonry-item gallery-item"
+                data-description="{{ strtolower($gallery->description) }}"
+                data-batchcourse="{{ strtolower(($gallery->batch->course->name ?? 'No Course') . ' - ' . ($gallery->batch->name ?? 'No Batch')) }}">
+                <div id="border">
+                    <img class="map" src="{{ asset('storage/' . $gallery->file_name) }}" alt="{{ $gallery->description }}">
+                    <div class="masonry-overlay">
+                        <h3 class="text-white">{{ $gallery->description }}</h3>
+                        <p>{{ $gallery->batch->course->name ?? 'No Course' }} - {{ $gallery->batch->name ?? 'No Batch' }}</p>
                     </div>
-                @endforeach
-            @endif
+                </div>
+            </div>
         @endforeach
     </div>
 
-    <!-- Slider View -->
-    <div id="gallery-slider" class="gallery-view" style="display:none;">
+    <div id="gallery-slider" class="gallery-view">
         <div class="swiper">
             <div class="swiper-wrapper">
-                @foreach ($batches as $batch)
-                    @if ($batch->galleries->count())
-                        @foreach ($batch->galleries as $gallery)
-                            <div class="swiper-slide"
-                                data-description="{{ strtolower($gallery->description) }}"
-                                data-batch="batch-{{ $batch->id }}"
-                                data-batchname="{{ strtolower($batch->name) }}">
-                                <img src="{{ asset('storage/' . $gallery->file_name) }}" alt="{{ $gallery->description }}">
-                                <div class="swiper-overlay">
-                                    <h3>{{ $gallery->description }}</h3>
-                                    <p>{{ $batch->name }}</p>
-                                </div>
-                            </div>
-                        @endforeach
-                    @endif
+                {{-- Swiper slides will be populated by JS for filtering, or initially from Laravel --}}
+                @foreach ($galleries as $gallery)
+                    <div class="swiper-slide gallery-item"
+                        data-description="{{ strtolower($gallery->description) }}"
+                        data-batchcourse="{{ strtolower(($gallery->batch->course->name ?? 'No Course') . ' - ' . ($gallery->batch->name ?? 'No Batch')) }}">
+                        <img src="{{ asset('storage/' . $gallery->file_name) }}" alt="{{ $gallery->description }}">
+                        <div class="swiper-overlay">
+                            <h3>{{ $gallery->description }}</h3>
+                            <p>{{ $gallery->batch->course->name ?? 'No Course' }} - {{ $gallery->batch->name ?? 'No Batch' }}</p>
+                        </div>
+                    </div>
                 @endforeach
             </div>
             <div class="swiper-pagination"></div>
@@ -284,144 +343,300 @@
         </div>
     </div>
 
-    <!-- Blog View -->
-    <div id="gallery-blog" class="blog-container gallery-view" style="display:none;">
-        @foreach ($batches as $batch)
-            @if ($batch->galleries->count())
-                @foreach ($batch->galleries as $gallery)
-                    <div class="blog-card"
-                        data-description="{{ strtolower($gallery->description) }}"
-                        data-batch="batch-{{ $batch->id }}"
-                        data-batchname="{{ strtolower($batch->name) }}">
-                        <img src="{{ asset('storage/' . $gallery->file_name) }}" alt="{{ $gallery->description }}">
-                        <div class="blog-card-content">
-                            <div class="blog-card-title">{{ $gallery->description }}</div>
-                            <div class="blog-card-batch">{{ $batch->name }}</div>
-                            <div class="blog-card-desc">Batch: {{ $batch->name }}</div>
-                        </div>
+    <div id="gallery-blog" class="gallery-view">
+        <div class="blog-container">
+            {{-- Blog cards will be populated by JS for filtering, or initially from Laravel --}}
+            @foreach ($galleries as $gallery)
+                <div class="blog-card gallery-item"
+                    data-description="{{ strtolower($gallery->description) }}"
+                    data-batchcourse="{{ strtolower(($gallery->batch->course->name ?? 'No Course') . ' - ' . ($gallery->batch->name ?? 'No Batch')) }}">
+                    <img src="{{ asset('storage/' . $gallery->file_name) }}" alt="{{ $gallery->description }}">
+                    <div class="blog-card-content">
+                        <div class="blog-card-title">{{ $gallery->description }}</div>
+                        <div class="blog-card-batch">{{ $gallery->batch->course->name ?? 'No Course' }} - {{ $gallery->batch->name ?? 'No Batch' }}</div>
+                        <div class="blog-card-desc">Batch: {{ $gallery->batch->name ?? '-' }}<br>Course: {{ $gallery->batch->course->name ?? '-' }}</div>
                     </div>
-                @endforeach
-            @endif
-        @endforeach
+                </div>
+            @endforeach
+        </div>
     </div>
+
+    {{-- Load More Button --}}
+    <div id="loadMoreBtn" class="flex items-center justify-center" title="Load More Images">
+        <i class="fas fa-chevron-down"></i>
+    </div>
+    <div class="loading-text" id="loading"></div>
 </div>
 
-<!-- jQuery -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<!-- SwiperJS for slider view -->
 <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
 
 <script>
-    // Gallery view switcher
+    let page = {{ $galleries->currentPage() }}; // Initialize page with current page from Laravel pagination
+    let lastPage = {{ $galleries->lastPage() }}; // Get the last page from Laravel pagination
+    let loading = false;
+    let currentView = 'masonry';
+    let selectedBatch = 'all';
+    let gallerySwiper;
+    let lastPageReached = (page >= lastPage); // Set initial lastPageReached based on Laravel pagination
+
+    // Function to initialize or reinitialize Swiper
+    function initSwiper() {
+        if (gallerySwiper) {
+            gallerySwiper.destroy(true, true); // Destroy existing instance
+        }
+        gallerySwiper = new Swiper('.swiper', {
+            slidesPerView: 3,
+            spaceBetween: 30,
+            loop: false, // Set loop to false when filtering
+            pagination: { el: '.swiper-pagination', clickable: true },
+            navigation: { nextEl: '.swiper-button-next', prevEl: '.swiper-button-prev' },
+            breakpoints: {
+                0: { slidesPerView: 1 },
+                600: { slidesPerView: 2 },
+                900: { slidesPerView: 3 }
+            },
+            observer: true, // Enable observer to react to DOM changes
+            observeParents: true, // Enable observeParents to react to parent DOM changes
+            on: {
+                init: function () {
+                    this.update(); // Update Swiper after initialization
+                },
+                resize: function () {
+                    this.update(); // Update Swiper on window resize
+                },
+                slideChange: function() {
+                    if (this.slides[this.activeIndex] && $(this.slides[this.activeIndex]).hasClass('filtered-out')) {
+                        const visibleSlides = this.slides.filter(slide => !$(slide).hasClass('filtered-out'));
+                        if (visibleSlides.length > 0) {
+                            const firstVisibleIndex = this.slides.indexOf(visibleSlides[0]);
+                            this.slideTo(firstVisibleIndex);
+                        } else {
+                            this.slideTo(0);
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    // Function to set the active gallery view
     function setGalleryView(view) {
-        document.querySelectorAll('.gallery-view').forEach(el => el.style.display = 'none');
-        document.getElementById('gallery-' + view).style.display = '';
-        // Update active button
-        var btns = document.querySelectorAll('.header .btn');
-        btns.forEach(btn => btn.classList.remove('active'));
-        document.querySelector('.header .btn[data-view="' + view + '"]').classList.add('active');
-        // If slider, update Swiper
-        if (view === 'slider' && window.gallerySwiper) {
-            setTimeout(() => window.gallerySwiper.update(), 100);
+        // Remove 'active' from all views
+        $('.gallery-view').removeClass('active');
+        // Add 'active' to the selected view
+        $('#gallery-' + view).addClass('active');
+        currentView = view;
+
+        // Update active button styling
+        $('.header .btn').removeClass('active');
+        $('.header .btn[data-view="' + view + '"]').addClass('active');
+
+        // Reinitialize Swiper if switching to slider view
+        if (view === 'slider') {
+            setTimeout(initSwiper, 100);
+        } else {
+            if (gallerySwiper) {
+                gallerySwiper.destroy(true, true);
+                gallerySwiper = null; // Clear the reference
+            }
+        }
+        filterGallery(); // Always re-apply filters when changing views
+    }
+
+    // Function to filter gallery items based on search term and selected batch
+    function filterGallery() {
+        const searchTerm = $('#searchInput').val().toLowerCase().trim();
+
+        $('.gallery-item').each(function () {
+            const $item = $(this);
+            const description = $item.data('description') || '';
+            const batchcourse = $item.data('batchcourse') || '';
+
+            let matchesBatch = (selectedBatch === 'all' || batchcourse === selectedBatch);
+            let matchesSearch = (!searchTerm || description.includes(searchTerm) || batchcourse.includes(searchTerm));
+
+            if (matchesBatch && matchesSearch) {
+                if ($item.hasClass('masonry-item') || $item.hasClass('blog-card')) {
+                    $item.show();
+                } else if ($item.hasClass('swiper-slide')) {
+                    $item.removeClass('filtered-out');
+                }
+            } else {
+                if ($item.hasClass('masonry-item') || $item.hasClass('blog-card')) {
+                    $item.hide();
+                } else if ($item.hasClass('swiper-slide')) {
+                    $item.addClass('filtered-out');
+                }
+            }
+        });
+
+        if (currentView === 'slider' && gallerySwiper) {
+            gallerySwiper.update();
+            const activeSlide = gallerySwiper.slides[gallerySwiper.activeIndex];
+            if (activeSlide && $(activeSlide).hasClass('filtered-out')) {
+                const firstVisibleSlideIndex = gallerySwiper.slides.findIndex(slide => !$(slide).hasClass('filtered-out'));
+                if (firstVisibleSlideIndex !== -1) {
+                    gallerySwiper.slideTo(firstVisibleIndex);
+                } else {
+                    gallerySwiper.slideTo(0);
+                }
+            }
         }
     }
-    // Default view
-    setGalleryView('masonry');
 
-    // Swiper slider init (3 slides per view)
-    window.gallerySwiper = new Swiper('.swiper', {
-        slidesPerView: 3,
-        spaceBetween: 30,
-        loop: true,
-        pagination: { el: '.swiper-pagination', clickable: true },
-        navigation: { nextEl: '.swiper-button-next', prevEl: '.swiper-button-prev' },
-        breakpoints: {
-            0: { slidesPerView: 1 },
-            600: { slidesPerView: 2 },
-            900: { slidesPerView: 3 }
-        }
-    });
+    // Function to load more galleries via AJAX
+    function loadGalleries() {
+        if (loading || lastPageReached) return; // Prevent multiple loads or loading past the last page
+        loading = true;
+        $('#loading').show();
+        $('#loadMoreBtn').addClass('loading').find('i').removeClass('fa-chevron-down').addClass('fa-spinner fa-spin'); // Show spinner
 
-    // Search and dropdown logic (works for all views)
+        $.ajax({
+            url: '{{ route("gallery_index") }}',
+            data: { page: page + 1 }, // Request the next page
+            success: function(response) {
+                if (response.data && response.data.length > 0) {
+                    response.data.forEach(gallery => {
+                        const batchCourse = (gallery.batch && gallery.batch.course ? gallery.batch.course.name : 'No Course') + ' - ' + (gallery.batch ? gallery.batch.name : 'No Batch');
+                        const lowerCaseDescription = gallery.description ? gallery.description.toLowerCase() : '';
+                        const lowerCaseBatchCourse = batchCourse.toLowerCase();
+
+                        // Create elements for all views, then filter will handle visibility
+                        const masonryItem = `
+                            <div class="masonry-item gallery-item" id="frame"
+                                data-description="${lowerCaseDescription}"
+                                data-batchcourse="${lowerCaseBatchCourse}">
+                                <div id="border">
+                                    <img class="map" src="{{ asset('storage/') }}/${gallery.file_name}" alt="${gallery.description}">
+                                    <div class="masonry-overlay">
+                                        <h3 class="text-white">${gallery.description}</h3>
+                                        <p>${batchCourse}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                        $('#gallery-masonry').append(masonryItem);
+
+                        const swiperSlide = `
+                            <div class="swiper-slide gallery-item"
+                                data-description="${lowerCaseDescription}"
+                                data-batchcourse="${lowerCaseBatchCourse}">
+                                <img src="{{ asset('storage/') }}/${gallery.file_name}" alt="${gallery.description}">
+                                <div class="swiper-overlay">
+                                    <h3>${gallery.description}</h3>
+                                    <p>${batchCourse}</p>
+                                </div>
+                            </div>
+                        `;
+                        $('#gallery-slider .swiper-wrapper').append(swiperSlide);
+
+                        const blogCard = `
+                            <div class="blog-card gallery-item"
+                                data-description="${lowerCaseDescription}"
+                                data-batchcourse="${lowerCaseBatchCourse}">
+                                <img src="{{ asset('storage/') }}/${gallery.file_name}" alt="${gallery.description}">
+                                <div class="blog-card-content">
+                                    <div class="blog-card-title">${gallery.description}</div>
+                                    <div class="blog-card-batch">${batchCourse}</div>
+                                    <div class="blog-card-desc">Batch: ${gallery.batch ? gallery.batch.name : '-'}<br>Course: ${gallery.batch && gallery.batch.course ? gallery.batch.course.name : '-'}</div>
+                                </div>
+                            </div>
+                        `;
+                        $('#gallery-blog .blog-container').append(blogCard);
+                    });
+                    page = response.current_page; // Update current page
+                    lastPage = response.last_page; // Update last page
+                    filterGallery(); // Re-filter after new items are added
+
+                    if (page >= lastPage) { // Check if it's the last page
+                        lastPageReached = true;
+                        $('#loadMoreBtn').hide(); // Hide button if no more pages
+                    }
+                } else {
+                    lastPageReached = true;
+                    $('#loadMoreBtn').hide(); // Hide button if no more items are returned
+                }
+            },
+            complete: function() {
+                loading = false;
+                $('#loading').hide();
+                $('#loadMoreBtn').removeClass('loading').find('i').removeClass('fa-spinner fa-spin').addClass('fa-chevron-down'); // Reset button icon
+            },
+            error: function(xhr, status, error) {
+                console.error("Error loading galleries:", status, error);
+                loading = false;
+                $('#loading').hide();
+                $('#loadMoreBtn').removeClass('loading').find('i').removeClass('fa-spinner fa-spin').addClass('fa-chevron-down'); // Reset button icon
+            }
+        });
+    }
+
     $(function () {
-        let selectedBatch = 'all';
-
         const $searchInput = $('#searchInput');
         const $dropdownToggle = $('#dropdownToggle');
         const $dropdownList = $('#dropdownList');
+        const $viewButtons = $('.header .btn');
+        const $loadMoreBtn = $('#loadMoreBtn');
 
-        // Show/hide dropdown list
+        // Event listeners for view buttons
+        $viewButtons.on('click', function() {
+            setGalleryView($(this).data('view'));
+        });
+
+        // Toggle dropdown list visibility
         $dropdownToggle.on('click', function () {
             $dropdownList.toggleClass('active');
         });
 
-        // When clicking outside, close dropdown
+        // Hide dropdown if clicked outside
         $(document).on('click', function (e) {
             if (!$(e.target).closest('.search-combo').length) {
                 $dropdownList.removeClass('active');
             }
         });
 
-        // Dropdown batch selection
+        // Handle dropdown item selection
         $dropdownList.on('click', 'div', function () {
             selectedBatch = $(this).data('value');
             if (selectedBatch === 'all') {
-                $searchInput.val('');
+                $searchInput.val(''); // Clear search input when "All Batches" is chosen
             } else {
-                $searchInput.val($(this).text());
+                $searchInput.val($(this).text().trim()); // Set search input to selected batch
             }
             $dropdownList.removeClass('active');
-            filterGallery();
+            filterGallery(); // Apply filter immediately
         });
 
-        // Search icon click triggers filtering
+        // Trigger filter on search icon click
         $('#searchIcon').on('click', filterGallery);
 
-        // Filter on Enter key in input field
+        // Trigger filter on Enter key press in search input
         $searchInput.on('keypress', function (e) {
-            if (e.which === 13) { // Enter key
-                e.preventDefault();
+            if (e.which === 13) {
+                e.preventDefault(); // Prevent form submission
                 filterGallery();
             }
         });
 
-        // Live filtering as user types
+        // Trigger filter on input changes in search bar (live search)
         $searchInput.on('input', function () {
-            selectedBatch = 'all';
+            selectedBatch = 'all'; // Reset batch selection when typing in search bar
             filterGallery();
         });
 
-        function filterGallery() {
-            const searchTerm = $searchInput.val().toLowerCase().trim();
+        // Load more galleries on button click
+        $loadMoreBtn.on('click', function() {
+            loadGalleries();
+        });
 
-            // For each view
-            $('.gallery-view').each(function () {
-                const $view = $(this);
-                let hasVisible = false;
-                $view.find('[data-description]').each(function () {
-                    const $item = $(this);
-                    const description = $item.data('description');
-                    const batchname = $item.data('batchname');
-                    const batch = $item.data('batch');
-                    let show = true;
+        // Initial setup on page load
+        setGalleryView('masonry'); // Ensure masonry is the default view on load
 
-                    if (selectedBatch !== 'all' && batch !== selectedBatch) show = false;
-                    if (searchTerm && !(description.includes(searchTerm) || batchname.includes(searchTerm))) show = false;
-
-                    $item.toggle(show);
-                    if (show) hasVisible = true;
-                });
-                $view.toggle(hasVisible);
-            });
-
-            // For slider, update Swiper after filtering
-            if ($('#gallery-slider').is(':visible') && window.gallerySwiper) {
-                setTimeout(() => window.gallerySwiper.update(), 100);
-            }
+        // Hide load more button if all data is already loaded initially
+        if (lastPageReached) {
+            $('#loadMoreBtn').hide();
         }
-
-        // Initial filter on page load (show all)
-        filterGallery();
     });
 </script>
 

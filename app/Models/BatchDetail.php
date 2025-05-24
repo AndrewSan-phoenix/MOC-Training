@@ -17,4 +17,9 @@ class BatchDetail extends Model
     {
         return $this->belongsTo(Teacher::class);
     }
+
+public function getBatchCourseAttribute()
+{
+    return ($this->batch->course->name ?? 'No Course') . ' - ' . ($this->batch->name ?? 'N/A');
+}
 }

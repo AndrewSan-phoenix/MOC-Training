@@ -1,9 +1,10 @@
 <?php
 
 namespace App\Livewire;
-use Symfony\Component\HttpFoundation\StreamedResponse; // Make sure this is at the top with your other use statements
 
+use Symfony\Component\HttpFoundation\StreamedResponse; // Make sure this is at the top with your other use statements
 use App\Models\Batch;
+use App\Models\Course; // Assuming you might use it, though not directly in this corrected version's save logic
 use App\Models\Enroll;
 use App\Models\Student;
 use Livewire\Attributes\On;
@@ -30,7 +31,8 @@ class EnrollManagement extends Component
 
     public function mount()
     {
-        $this->batches = Batch::all(['id', 'name']);
+        // Eager load course relationship for batches to get course_id and name
+        $this->batches = Batch::with('course')->get(['id', 'name', 'course_id']);
         $this->students = Student::all(['id', 'name']);
     }
 
@@ -41,6 +43,7 @@ class EnrollManagement extends Component
 
     public function openModal()
     {
+        $this->resetForm(); // Reset form when opening for a new entry
         $this->showModal = true;
     }
 
@@ -54,20 +57,43 @@ class EnrollManagement extends Component
     {
         $this->validate();
 
+        // Get the selected batch and its course_id
+        $batch = Batch::find($this->batch_id);
+        if (!$batch) {
+            $this->addError('batch_id', 'Selected batch does not exist.');
+            return;
+        }
+        $courseId = $batch->course_id;
+
+        // Check if the student is already enrolled in any batch of this course
+        $alreadyEnrolled = Enroll::where('student_id', $this->student_id)
+            ->whereHas('batch', function ($q) use ($courseId) {
+                $q->where('course_id', $courseId);
+            })
+            ->when($this->enrollId, fn($q) => $q->where('id', '!=', $this->enrollId))
+            ->exists();
+
+        if ($alreadyEnrolled) {
+            $this->addError('student_id', 'This student is already enrolled in a batch for this course.');
+            return;
+        }
+
         $data = [
             'batch_id' => $this->batch_id,
             'student_id' => $this->student_id,
             'enroll_date' => $this->enroll_date,
+            'course_id' => $courseId, // Only if your enrolls table has this column
         ];
 
         if ($this->enrollId) {
             Enroll::findOrFail($this->enrollId)->update($data);
+            $this->dispatch('notify', message: 'Enrollment updated successfully!');
         } else {
             Enroll::create($data);
+            $this->dispatch('notify', message: 'Enrollment created successfully!');
         }
 
         $this->closeModal();
-        $this->dispatch('notify', message: $this->enrollId ? 'Enrollment updated successfully!' : 'Enrollment created successfully!');
     }
 
     #[On('edit-enroll')]
@@ -94,42 +120,46 @@ class EnrollManagement extends Component
         $this->batch_id = '';
         $this->student_id = '';
         $this->enroll_date = '';
-        $this->resetValidation();
+        $this->resetValidation(); // Clear validation errors
     }
-    
-// public function export(): StreamedResponse
-// {
-//     $filename = 'enrolls_' . now()->format('Y-m-d_H-i-s') . '.csv';
 
-//     return response()->streamDownload(function () {
-//         $handle = fopen('php://output', 'w');
+    // public function export(): StreamedResponse
+    // {
+    //     $filename = 'enrolls_' . now()->format('Y-m-d_H-i-s') . '.csv';
 
-//         // Header row
-//         fputcsv($handle, [
-//             'ID',
-//             'Batch Name',
-//             'Student Name',
-//             'Enroll Date',
-//         ]);
+    //     return response()->streamDownload(function () {
+    //         $handle = fopen('php://output', 'w');
 
-//         // Batch rows
-//         Enroll::with('enroll')->cursor()->each(function ($enroll) use ($handle) {
-//             fputcsv($handle, [
-//                 $enroll->id,
-//                 optional($enroll->batch)->name,
-//                 optional($enroll->student)->name,
-//                 $enroll->enroll_date,            
-//             ]);
-//         });
+    //         // Header row
+    //         fputcsv($handle, [
+    //             'ID',
+    //             'Course Name',
+    //             'Batch Name',
+    //             'Student Name',
+    //             'Enroll Date',
+    //         ]);
 
-//         fclose($handle);
-//     }, $filename);
-// }
+    //         // Data rows
+    //         // Corrected: Eager load necessary relations for export
+    //         Enroll::with(['batch.course', 'student'])->cursor()->each(function ($enroll) use ($handle) {
+    //             fputcsv($handle, [
+    //                 $enroll->id,
+    //                 optional(optional($enroll->batch)->course)->name, // Safely access course name
+    //                 optional($enroll->batch)->name,
+    //                 optional($enroll->student)->name,
+    //                 $enroll->enroll_date,
+    //             ]);
+    //         });
+
+    //         fclose($handle);
+    //     }, $filename);
+    // }
 
     public function render()
     {
+        // Eager load batch.course for table display
         return view('livewire.enroll-management', [
-            'enrollments' => Enroll::with(['batch', 'student'])->paginate(5),
+            'enrollments' => Enroll::with(['batch.course', 'student'])->latest()->paginate(5),
         ]);
     }
 }

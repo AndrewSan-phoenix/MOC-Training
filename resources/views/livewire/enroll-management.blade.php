@@ -19,11 +19,11 @@
             Add Enrollment
         </button>
         <button
-        wire:click="export"
-        class="bg-success text-white px-4 py-2 rounded hover:bg-green-700 transition"
-    >
-        Export Enrolls
-    </button>
+            wire:click="export"
+            class="bg-success text-white px-4 py-2 rounded hover:bg-green-700 transition"
+        >
+            Export Enrolls
+        </button>
     </div>
 
     <!-- Modal -->
@@ -38,7 +38,9 @@
                         <select wire:model="batch_id" id="batch_id" data-flux-control class="w-full border-gray-300 rounded-md p-2">
                             <option value="">Select Batch</option>
                             @foreach ($batches as $batch)
-                                <option value="{{ $batch->id }}">{{ $batch->name }}</option>
+                                <option value="{{ $batch->id }}">
+                                    {{ $batch->course->name ?? 'No Course' }} - {{ $batch->name }}
+                                </option>
                             @endforeach
                         </select>
                         @error('batch_id') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
@@ -62,6 +64,7 @@
                 <div class="mt-4 flex gap-4 justify-end">
                     <button type="submit" class="bg-info text-light px-4 py-2 rounded-md hover:bg-primary transition-colors">
                         {{ $enrollId ? 'Update' : 'Save' }}
+                   
                     </button>
                     <button type="button" @click="open = false" wire:click="closeModal" class="bg-gray-500 text-light px-4 py-2 rounded-md hover:bg-gray-600 transition-colors">
                         Cancel
@@ -75,11 +78,11 @@
     <livewire:custom-table wire:key="enrollments-{{ $enrollments->count() }}-{{ $enrollments->pluck('id')->join('-') }}"
         :config="[
             'columns' => [
-                ['label' => 'Batch', 'key' => 'batch.name'],
+                ['label' => 'Batch', 'key' => 'batch_course'],
                 ['label' => 'Student', 'key' => 'student.name'],
                 ['label' => 'Enrollment Date', 'key' => 'enroll_date'],
             ],
-            'data' => $enrollments->items(), 
+            'data' => $enrollments->items(),
             'actions' => [
                 [
                     'label' => 'Edit',
@@ -96,10 +99,10 @@
             ],
             'emptyMessage' => 'No enrollments found.'
         ]" />
-@if ($enrollments instanceof \Illuminate\Pagination\LengthAwarePaginator)
-    <div class="mt-4">
-        {{ $enrollments->links('components.pagination-links') }}
-    </div>
-@endif
+    @if ($enrollments instanceof \Illuminate\Pagination\LengthAwarePaginator)
+        <div class="mt-4">
+            {{ $enrollments->links('components.pagination-links') }}
+        </div>
+    @endif
 
 </div>

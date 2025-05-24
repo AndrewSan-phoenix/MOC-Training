@@ -35,7 +35,7 @@ class BatchDetailsManagement extends Component
 
     public function mount()
     {
-        $this->batches = Batch::all(['id', 'name']);
+        $this->batches = Batch::with('course')->get(['id', 'name', 'course_id']);
         $this->teachers = Teacher::all(['id', 'name']);
     }
 
@@ -144,7 +144,7 @@ public function export(): StreamedResponse
     public function render()
     {
         return view('livewire.batch-details-management', [
-            'batchdetails' => BatchDetail::with('batch', 'teacher')->latest()->paginate(5)
+            'batchdetails' => BatchDetail::with('batch.course', 'teacher')->latest()->paginate(5)
         ]);
     }
 }

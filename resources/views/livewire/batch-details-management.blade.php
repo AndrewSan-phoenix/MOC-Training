@@ -83,7 +83,7 @@
     <livewire:custom-table wire:key="batchdetails-{{ $batchdetails->count() }}-{{ $batchdetails->pluck('id')->join('-') }}"
         :config="[
             'columns' => [
-                ['label' => 'Batch', 'key' => 'batch.name'],
+                ['label' => 'Batch', 'key' => 'batch_course'],
                 ['label' => 'Teacher', 'key' => 'teacher.name'],
                 ['label' => 'Lecture Date', 'key' => 'lecture_date'],
                 ['label' => 'Lecture Title', 'key' => 'lecture_title'],

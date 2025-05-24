@@ -1,6 +1,5 @@
 @props([])
 
-
 <div class="container mx-auto p-4">
     <h1 class="text-2xl mb-6 font-bold text-primary">Gallery Management</h1>
 
@@ -47,7 +46,9 @@
                             class="w-full border border-gray-300 rounded-md p-2">
                             <option value="">Select Batch</option>
                             @foreach ($batches as $batch)
-                                <option value="{{ $batch->id }}">{{ $batch->name }}</option>
+                                <option value="{{ $batch->id }}">
+                                    {{ $batch->course->name ?? 'No Course' }} - {{ $batch->name }}
+                                </option>
                             @endforeach
                         </select>
                         @error('batch_id') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
@@ -68,18 +69,18 @@
         </div>
     </div>
 
-
-
-  <!-- Dropdown menu -->
- 
-
-<select name="batch" id="batch" wire:model.live="searchBatchId">
-    @foreach($batches as $batch)
-        <option value="{{ $batch->id }}">{{ $batch->name }}</option>
-    @endforeach
-   
-</select>
-
+    <!-- Dropdown menu for filtering -->
+    <div class="mb-6">
+        <select name="batch" id="batch" wire:model.live="searchBatchId"
+            class="w-full md:w-80 border border-gray-300 rounded-md p-2">
+            <option value="">All Courses & Batches</option>
+            @foreach($batches as $batch)
+                <option value="{{ $batch->id }}">
+                    {{ $batch->course->name ?? 'No Course' }} - {{ $batch->name }}
+                </option>
+            @endforeach
+        </select>
+    </div>
 
     <!-- Gallery Grid -->
     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
@@ -91,8 +92,7 @@
 
                 <!-- Hover Details -->
                 <div class="absolute inset-0 bg-black bg-opacity-50 opacity-0 group-hover:opacity-70 transition-opacity duration-300 flex flex-col justify-between p-4">
-                    
-                    <div class="mt-2 flex justify-content-end justify-end gap-2">
+                    <div class="mt-2 flex justify-end gap-2">
                         <button wire:click="edit({{$gallery->id}})"
                             class="bg-green-500 text-light px-3 py-1 rounded-md hover:bg-black transition-colors">
                             <!-- Edit Icon -->
@@ -110,19 +110,17 @@
                             </svg>
                         </button>
                     </div>
-
                     <div class="mt-2 flex flex-col items-center justify-center">
-                        
-                    <p class="text-gray-100 font-semibold">{{ $gallery->description }}</p>
-                        <p class="text-sm text-gray-300">Batch: {{ $gallery->batch->name ?? 'N/A' }}</p>
+                        <p class="text-gray-100 font-semibold">{{ $gallery->description }}</p>
+                        <p class="text-sm text-gray-300">
+                            Batch: {{ $gallery->batch->course->name ?? 'No Course' }} - {{ $gallery->batch->name ?? 'N/A' }}
+                        </p>
                     </div>
                 </div>
             </div>
         @empty
             <p class="text-gray-500 col-span-full">No gallery images found.</p>
-
         @endforelse
     </div>
-<!-- Load More Button -->
-
+    <!-- Load More Button (optional) -->
 </div>
