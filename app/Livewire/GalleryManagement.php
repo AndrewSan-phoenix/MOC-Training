@@ -3,26 +3,28 @@
 namespace App\Livewire;
 
 use App\Models\Gallery;
-use App\Models\Batch;            
+use App\Models\Batch;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 use Livewire\Attributes\Validate;
-use Livewire\Attributes\On; 
+use Livewire\Attributes\On;
 use Illuminate\Support\Collection;
 
 class GalleryManagement extends Component
 {
     use WithFileUploads;
 
-    public $galleries;
+    // Remove $galleries from here, as it will hold a Paginator instance, which Livewire doesn't directly support as a public property for state.
+    // public $galleries; // DELETE THIS LINE
+
     public $batches;
-    public $filteredGalleries=null;
+    public $filteredGalleries = null;
     public $galleryId = null;
     public $showModal = false;
     public $showbatch = false;
     public $searchBatchId = '';
 
-
+    
     #[Validate('required|image|max:2048')]
     public $file;
 
@@ -34,27 +36,13 @@ class GalleryManagement extends Component
 
     public function mount()
     {
-        $this->loadGalleries();
+        // No need to load galleries here directly into a public property, render() will handle it.
         $this->batches = Batch::all(['id', 'name']);
     }
 
-    public function loadGalleries()
-    {
-        $this->galleries = Gallery::with('batch')->get();
-        
-        
-  
-    }
-    public function openbatch()
-    {
-        if ($this->searchBatchId !== '' && $this->batch_id==$this->searchBatchId) {
-            $this->showbatch = true;
-            $this->galleries = Gallery::where('batch_id', $this->searchBatchId)->with('batch')->get();
-        } else {
-            $this->loadGalleries();
-        }
-    }
     
+
+   
 
     public function openModal()
     {
@@ -84,14 +72,14 @@ class GalleryManagement extends Component
             $gallery->update($data);
         } else {
             Gallery::create($data);
+
         }
 
         $this->closeModal();
-        $this->loadGalleries();
+        // Dispatching notify message, render will automatically re-run and update the gallery list
         $this->dispatch('notify', message: $this->galleryId ? 'Gallery updated successfully!' : 'Gallery uploaded successfully!');
     }
 
-   
     public function edit($id)
     {
         $gallery = Gallery::findOrFail($id);
@@ -109,7 +97,7 @@ class GalleryManagement extends Component
         }
         $gallery->delete();
 
-        $this->loadGalleries();
+        // Dispatching notify message, render will automatically re-run and update the gallery list
         $this->dispatch('notify', message: 'Gallery deleted successfully!');
     }
 
@@ -121,19 +109,28 @@ class GalleryManagement extends Component
         $this->batch_id = '';
         $this->resetValidation();
     }
+
     
 
     public function render()
     {
-        // Always eager load batch and course for dropdown and display
-        $this->galleries = Gallery::with(['batch.course'])->when(
-            !empty($this->searchBatchId),
-            fn($q) => $q->where('batch_id', $this->searchBatchId)
-        )->get();
+        // Always eager load batch and course
+        // Apply filtering by batch_id if searchBatchId is set
+        // Limit the results by perPage
+        $galleries = Gallery::with(['batch.course'])
+            ->when(
+                !empty($this->searchBatchId),
+                fn($q) => $q->where('batch_id', $this->searchBatchId)
+            )
+            ->latest() // Order by latest to show new images first
+            ->get(); // Use paginate to handle the limit and provide total count
 
         // For dropdown, eager load course for each batch
         $this->batches = \App\Models\Batch::with('course')->get();
 
-        return view('livewire.gallery-management');
+        // Pass the paginator instance directly to the view
+        return view('livewire.gallery-management', [
+            'galleries' => $galleries,
+        ]);
     }
 }

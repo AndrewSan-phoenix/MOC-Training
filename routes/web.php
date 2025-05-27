@@ -24,7 +24,10 @@ use Livewire\Volt\Volt;
 
 Route::get('/' , [BrandingPageController::class, 'index'])->name('home');
 Route::get('/our-teacher' , [BrandingPageController::class, 'teacher'])->name('teacher_index');
+Route::get('/get-teachers-ajax', [BrandingPageController::class, 'getTeachersAjax'])->name('get.teachers.ajax');
 Route::get('/our-student' , [BrandingPageController::class, 'student'])->name('student_index');
+Route::get('/get-students-ajax', [BrandingPageController::class, 'getStudentsAjax'])->name('get.students.ajax');
+
 Route::get('/our-course' , [BrandingPageController::class, 'course'])->name('course_index');
 Route::get('/our-batch' , [BrandingPageController::class, 'batch'])->name('batch_index');
 Route::get('/our-gallery' , [BrandingPageController::class, 'galleries'])->name('gallery_index');

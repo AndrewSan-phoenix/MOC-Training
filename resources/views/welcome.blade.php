@@ -7,17 +7,28 @@
 <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
 <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
 <script>
-    AOS.init({ duration: 1200, twice: true });
+    AOS.init({ duration: 1200, once: false }); // Changed to once: true for single animation on scroll
 </script>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
 
 <style>
+    /* Global fixes to prevent horizontal scrollbar */
+    body {
+        overflow-x: hidden; /* Prevent horizontal scroll on the body */
+    }
+
     /* Hero Section */
     .hero-bg {
-        /* background: linear-gradient(120deg, #2563eb 0%, #1e293b 100%); */
         position: relative;
-        overflow: hidden;
+        overflow: hidden; /* Ensures content within hero-bg doesn't overflow horizontally */
+        height: 600px; /* Default height */
     }
+    @media (min-width: 768px) {
+        .hero-bg {
+            height: 700px; /* Larger height for larger screens */
+        }
+    }
+
     .hero-bg::before {
         content: "";
         position: absolute;
@@ -45,6 +56,19 @@
     .hero-btn:hover {
         transform: translateY(-4px) scale(1.04);
         box-shadow: 0 16px 40px 0 rgba(37,99,235,0.22);
+    }
+
+    /* Hero Image specific styles */
+    .hero-bg .absolute.inset-0 {
+        width: 100%; /* Ensure the image itself takes full width */
+        height: 100%; /* Ensure the image itself takes full height */
+        object-fit: cover; /* Covers the entire container, cropping if necessary */
+        transform: scale(1.05); /* Initial slight zoom */
+        transition: transform 10s ease-out; /* Slower transition for subtle effect */
+        z-index: 2; /* Ensure it's behind the overlay but above the wave */
+    }
+    .hero-bg .absolute.inset-0:hover {
+        transform: scale(1.1); /* Zoom in on hover */
     }
 
 
@@ -345,10 +369,10 @@
             // However, if you explicitly want say 5 slides for a specific breakpoint,
             // you'd add:
             // breakpoints: {
-            //     768: {
-            //         slidesPerView: 5,
-            //         spaceBetween: 20
-            //     }
+            //      768: {
+            //          slidesPerView: 5,
+            //          spaceBetween: 20
+            //      }
             // }
         });
 
@@ -390,7 +414,7 @@
     document.addEventListener('DOMContentLoaded', typeEffect);
 </script>
 
-<section class="hero-bg relative h-[600px] md:h-[700px] flex items-center justify-center overflow-hidden">
+<section class="hero-bg relative flex items-center justify-center " data-aos="fade-right">
     <img src="{{ asset('images/main.png') }}" alt="Office" class="absolute inset-0 w-full h-full object-cover opacity-80 scale-105 transition-transform duration-10000 hover:scale-110" style="z-index:2;">
     <div class="absolute inset-0 bg-gradient-to-br from-blue-900/80 via-white-800/60 to-black-700/40" style="z-index:3;"></div>
     <svg class="hero-wave" viewBox="0 0 1440 320"><path fill="#fff" fill-opacity="1" d="M0,224L48,213.3C96,203,192,181,288,192C384,203,480,245,576,240C672,235,768,181,864,176C960,171,1056,213,1152,197.3C1248,181,1344,107,1392,69.3L1440,32L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>
@@ -408,13 +432,13 @@
     </div>
 </section>
 
-<div class="w-full bg-gradient-to-br from-blue-50 via-blue-100 to-blue-200 py-12">
+<div class="w-full bg-gradient-to-br from-blue-50 via-blue-100 to-blue-200 py-12" data-aos="fade-up">
     <div class="max-w-7xl mx-auto px-4">
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
             <div class="flex flex-col items-center bg-white shadow-xl hover:shadow-2xl transition-all duration-300 rounded-xl p-8 border-t-8 border-blue-600 group w-full">
                 <div class="flex items-center justify-center w-16 h-16 rounded-full bg-blue-100 mb-4 shadow-lg group-hover:bg-blue-600 group-hover:text-white transition">
                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-8">
-  <path stroke-linecap="round" stroke-linejoin="round" d="M18 18.72a9.094 9.094 0 0 0 3.741-.479 3 3 0 0 0-4.682-2.72m.94 3.198.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0 1 12 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 0 1 6 18.719m12 0a5.971 5.971 0 0 0-.941-3.197m0 0A5.995 5.995 0 0 0 12 12.75a5.995 5.995 0 0 0-5.058 2.772m0 0a3 3 0 0 0-4.681 2.72 8.986 8.986 0 0 0 3.74.477m.94-3.197a5.971 5.971 0 0 0-.94 3.197M15 6.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm6 3a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Zm-13.5 0a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Z" />
+    <path stroke-linecap="round" stroke-linejoin="round" d="M18 18.72a9.094 9.094 0 0 0 3.741-.479 3 3 0 0 0-4.682-2.72m.94 3.198.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0 1 12 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 0 1 6 18.719m12 0a5.971 5.971 0 0 0-.941-3.197m0 0A5.995 5.995 0 0 0 12 12.75a5.995 5.995 0 0 0-5.058 2.772m0 0a3 3 0 0 0-4.681 2.72 8.986 8.986 0 0 0 3.74.477m.94-3.197a5.971 5.971 0 0 0-.94 3.197M15 6.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm6 3a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Zm-13.5 0a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Z" />
 </svg>
 
                 </div>
@@ -427,7 +451,7 @@
             </div>
             <div class="flex flex-col items-center bg-white shadow-xl hover:shadow-2xl transition-all duration-300 rounded-xl p-8 border-t-8 border-blue-600 group w-full">
                 <div class="flex items-center justify-center w-16 h-16 rounded-full bg-blue-100 mb-4 shadow-lg group-hover:bg-blue-600 group-hover:text-white transition">
-               <svg class="size-10 group-hover:fill-white"  height="200px" width="200px" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 301.055 301.055" xml:space="preserve"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M189.798,31.551c0-4.143-3.357-7.5-7.5-7.5h-79.453c-4.143,0-7.5,3.357-7.5,7.5v47.687c0,4.143,3.357,7.5,7.5,7.5h71.953 v21.186L102.845,179.9l-18.532-18.54c-1.571-1.571-3.769-2.362-5.97-2.168c-2.213,0.197-4.225,1.365-5.493,3.189L1.342,265.221 c-1.594,2.292-1.782,5.28-0.488,7.755c1.293,2.476,3.855,4.026,6.647,4.026h286.035c0.008,0.001,0.016,0.001,0.02,0 c4.143,0,7.5-3.357,7.5-7.5c0-1.783-0.622-3.421-1.661-4.708L189.798,108.66V31.551z M110.345,71.738V39.051h64.453v32.687H110.345z M21.85,262.003l58.195-83.694l17.495,17.503c1.407,1.406,3.315,2.197,5.305,2.197c1.989,0,3.897-0.791,5.304-2.197l73.141-73.165 l97.818,139.357H21.85z"></path> </g></svg>
+               <svg class="size-10 group-hover:fill-white"  height="200px" width="200px" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 301.055 301.055" xml:space="preserve"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M189.798,31.551c0-4.143-3.357-7.5-7.5-7.5h-79.453c-4.143,0-7.5,3.357-7.5,7.5v47.687c0,4.143,3.357,7.5,7.5,7.5h71.953 v21.186L102.845,179.9l-18.532-18.54c-1.571-1.571-3.769-2.362-5.97-2.168c-2.213,0.197-4.225,1.365-5.493,3.189L1.342,265.221 c-1.594,2.292-1.782,5.28-0.488,7.755c1.293,2.476,3.855,4.026,6.647,4.026h286.035c0.008,0.001,0.016,0.001,0.02,0 c4.143,0,7.5-3.357,7.5-7.5c0-1.783-0.622-3.421-1.661-4.708L189.798,108.66V31.551z M110.345,71.738V39.051h64.453v32.687H110.345z M21.85,262.003l58.195-83.694l17.495,17.503c1.407,1.406,3.315,2.197,5.305,2.197c1.989,0,3.897-0.791,5.304-2.197l73.141-73.165 l97.818,139.357H21.85z"></path> </g></svg>
 
                 </div>
                 <h5 class="text-xl font-bold text-blue-700 mb-2">ရည်ရွယ်ချက်</h5>
@@ -437,10 +461,10 @@
             </div>
             <div class="flex flex-col items-center bg-white shadow-xl hover:shadow-2xl transition-all duration-300 rounded-xl p-8 border-t-8 border-blue-600 group w-full">
                 <div class="flex items-center justify-center w-16 h-16 rounded-full bg-blue-100 mb-4 shadow-lg group-hover:bg-blue-600 group-hover:text-white transition">
-                
+
             <svg class="size-10 group-hover:fill-white" viewBox="0 0 1024 1024" fill="#000000" class="icon" version="1.1" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"><path d="M376.228 784.016c-4.414 0-8.078-3.578-8.078-8s3.5-8 7.922-8h0.156c4.42 0 8 3.578 8 8s-3.58 8-8 8zM440.224 720.02c-4.414 0-8.078-3.578-8.078-8s3.5-8 7.922-8h0.156c4.42 0 8 3.578 8 8s-3.58 8-8 8zM472.222 688.02c-4.414 0-8.078-3.578-8.078-7.998 0-4.422 3.5-8 7.922-8h0.156c4.42 0 8 3.578 8 8a7.998 7.998 0 0 1-8 7.998zM504.22 720.02c-4.414 0-8.078-3.578-8.078-8s3.5-8 7.922-8h0.156c4.42 0 8 3.578 8 8s-3.58 8-8 8zM504.22 656.024c-4.414 0-8.078-3.578-8.078-8s3.5-8 7.922-8h0.156c4.42 0 8 3.578 8 8s-3.58 8-8 8zM536.216 688.02c-4.406 0-8.078-3.578-8.078-7.998 0-4.422 3.5-8 7.922-8h0.156c4.422 0 8 3.578 8 8a7.994 7.994 0 0 1-8 7.998zM568.214 720.02c-4.406 0-8.078-3.578-8.078-8s3.5-8 7.922-8h0.156c4.42 0 7.998 3.578 7.998 8s-3.578 8-7.998 8zM408.226 752.016c-4.414 0-8.078-3.578-8.078-7.998 0-4.422 3.5-8 7.922-8h0.156c4.42 0 8 3.578 8 8a7.998 7.998 0 0 1-8 7.998zM440.224 784.016c-4.414 0-8.078-3.578-8.078-8s3.5-8 7.922-8h0.156c4.42 0 8 3.578 8 8s-3.58 8-8 8zM472.222 752.016c-4.414 0-8.078-3.578-8.078-7.998 0-4.422 3.5-8 7.922-8h0.156c4.42 0 8 3.578 8 8a7.998 7.998 0 0 1-8 7.998zM504.22 784.016c-4.414 0-8.078-3.578-8.078-8s3.5-8 7.922-8h0.156c4.42 0 8 3.578 8 8s-3.58 8-8 8zM536.216 752.016c-4.406 0-8.078-3.578-8.078-7.998 0-4.422 3.5-8 7.922-8h0.156c4.422 0 8 3.578 8 8a7.994 7.994 0 0 1-8 7.998zM568.214 784.016c-4.406 0-8.078-3.578-8.078-8s3.5-8 7.922-8h0.156c4.42 0 7.998 3.578 7.998 8s-3.578 8-7.998 8zM600.212 752.016c-4.406 0-8.078-3.578-8.078-7.998 0-4.422 3.5-8 7.922-8h0.156c4.422 0 8 3.578 8 8a7.994 7.994 0 0 1-8 7.998zM632.21 784.016c-4.406 0-8.078-3.578-8.078-8s3.5-8 7.922-8h0.156c4.42 0 7.998 3.578 7.998 8s-3.578 8-7.998 8zM600.212 816.012c-4.406 0-8.078-3.578-8.078-7.998 0-4.422 3.5-8 7.922-8h0.156c4.422 0 8 3.578 8 8a7.994 7.994 0 0 1-8 7.998zM664.208 816.012c-4.406 0-8.078-3.578-8.078-7.998 0-4.422 3.5-8 7.922-8h0.156c4.422 0 8 3.578 8 8a7.994 7.994 0 0 1-8 7.998z" fill=""></path><path d="M487.744 1024c-137.1 0-455.972-13.25-455.972-135.992 0-4.422 3.578-8 8-8 4.422 0 8 3.578 8 8 0 88.464 227.276 119.992 439.972 119.992 40.88 0 156.748-29.356 269.522-68.292 124.242-42.888 210.19-85.496 218.97-108.542-12.89-15.062-188.442-3.438-343.462 16.782a8 8 0 1 1-2.062-15.874c77.776-10.14 333.556-40.826 358.416-9.36 3.234 4.11 3.968 9.14 2.062 14.14C966.314 902.148 575.276 1024 487.744 1024z" fill=""></path><path d="M375.75 896.008h-111.994c-4.42 0-8-3.578-8-8s3.578-8 8-8h111.994c56.246 0 199.352-27.264 215.9-40.808-0.468-4.906-2.844-9.282-7.218-13.328-33.216-30.686-160.004-27.936-206.048-24.294a7.22 7.22 0 0 1-1.632-0.032c-2.304-0.312-231.612-28.28-306.452 37.716-15.162 13.374-22.53 29.326-22.53 48.746 0 4.422-3.578 8-8 8-4.42 0-8-3.578-8-8 0-23.952 9.406-44.386 27.952-60.746 78.682-69.356 300.45-43.872 318.214-41.684 14.42-1.11 173.338-12.094 217.336 28.542 8.282 7.624 12.468 16.672 12.468 26.89 0.004 30.124-197.124 54.998-231.99 54.998z" fill=""></path><path d="M711.736 816.012a7.95 7.95 0 0 1-5.656-2.344L498.086 605.682a8 8 0 0 1 11.312-11.31l207.994 207.986a7.996 7.996 0 0 1-5.656 13.654z" fill=""></path><path d="M343.752 768.016a8 8 0 0 1-5.656-13.656l159.99-159.988a8 8 0 0 1 11.312 11.31l-159.99 159.99a7.974 7.974 0 0 1-5.656 2.344z" fill=""></path><path d="M536.232 511.968a7.926 7.926 0 0 1-4.782-1.594 7.974 7.974 0 0 1-1.61-11.186c80.746-108.15 161.928-114.9 165.334-115.134 4.344-0.438 8.202 3.016 8.53 7.406a8.028 8.028 0 0 1-7.404 8.562c-0.766 0.046-77.636 6.952-153.646 108.728a7.994 7.994 0 0 1-6.422 3.218z" fill=""></path><path d="M649.458 511.968c-33.466 0-64.34-18.14-80.604-47.34-11.984-21.5-14.86-46.388-8.14-70.074 6.75-23.67 22.31-43.31 43.81-55.294 27.186-15.14 92.65-24.186 140.24-24.186 54.138 0 62.152 10.766 64.792 14.296 3.39 4.562 4.172 10.716 2.422 18.858-8.28 38.544-79.806 130.93-117.742 152.068a92.14 92.14 0 0 1-44.778 11.672z m95.308-180.894c-51.09 0-110.524 9.936-132.46 22.154-17.78 9.906-30.624 26.138-36.186 45.7-5.576 19.578-3.188 40.138 6.718 57.918 13.438 24.124 38.966 39.122 66.622 39.122 12.876 0 25.672-3.344 36.998-9.64 44.154-24.624 117.088-133.29 110.212-147.506-1.562-2.076-14.078-7.748-51.904-7.748z" fill=""></path><path d="M397.186 479.206c-9.624 0-18.998-1.984-27.866-5.906-30.374-13.42-103.572-92.682-96.456-116.93 3.82-13.032 29.178-19.64 75.386-19.64 25.828 0 59.584 2.704 76.854 10.312 34.81 15.406 50.616 56.232 35.256 91.042-11.052 24.982-35.848 41.122-63.174 41.122z m-48.934-126.478c-40.076 0-57.964 5.954-60.356 8.828-1.156 12.06 57.098 83.51 87.894 97.12a52.564 52.564 0 0 0 21.396 4.53c21 0 40.052-12.406 48.536-31.592 11.804-26.734-0.344-58.106-27.076-69.932-12.162-5.36-40.45-8.954-70.394-8.954z" fill=""></path><path d="M472.252 480.034a7.998 7.998 0 0 1-7.29-4.688c-28.936-63.45-88.408-61.918-88.9-61.808-3.852 0.032-8.124-3.266-8.304-7.688a8.02 8.02 0 0 1 7.68-8.312c2.774-0.078 70.73-1.936 104.086 71.182a8.01 8.01 0 0 1-3.96 10.594 8.062 8.062 0 0 1-3.312 0.72z" fill=""></path><path d="M503.376 240.486c-66.3 0-120.244-53.934-120.244-120.244S437.076 0 503.376 0c66.308 0 120.242 53.934 120.242 120.242s-53.934 120.244-120.242 120.244z m0-224.486c-57.482 0-104.244 46.762-104.244 104.244s46.762 104.244 104.244 104.244c57.464 0 104.244-46.762 104.244-104.244S560.84 16 503.376 16z" fill=""></path><path d="M503.376 272.234c-66.3 0-120.244-53.934-120.244-120.244 0-4.42 3.578-8 8-8 4.422 0 8 3.578 8 8 0 57.482 46.762 104.244 104.244 104.244 57.464 0 104.244-46.762 104.244-104.244 0-4.42 3.562-8 7.998-8 4.406 0 8 3.578 8 8 0 66.308-53.934 120.244-120.242 120.244z" fill=""></path><path d="M615.618 159.99a7.984 7.984 0 0 1-7.998-8V120.242c0-4.42 3.562-8 7.998-8 4.406 0 8 3.578 8 8v31.748c0 4.422-3.594 8-8 8zM391.132 159.99c-4.42 0-8-3.578-8-8V120.242c0-4.42 3.578-8 8-8 4.422 0 8 3.578 8 8v31.748c0 4.422-3.578 8-8 8zM503.626 175.99c-4.422 0-8-3.578-8-8V71.996c0-4.422 3.578-8 8-8 4.42 0 8 3.578 8 8v95.994a7.998 7.998 0 0 1-8 8z" fill=""></path><path d="M503.376 272.234c-4.422 0-8-3.578-8-8v-31.748c0-4.422 3.578-8 8-8s8 3.578 8 8v31.748c0 4.422-3.578 8-8 8z" fill=""></path><path d="M567.372 252.188c-4.438 0-8-3.578-8-8v-31.732c0-4.42 3.562-8 8-8a8.004 8.004 0 0 1 7.998 8v31.732c0 4.422-3.592 8-7.998 8z" fill=""></path><path d="M455.378 261.468c-4.42 0-8-3.578-8-8V221.72c0-4.422 3.578-8 8-8 4.422 0 8 3.578 8 8v31.748c0 4.422-3.578 8-8 8z" fill=""></path><path d="M504.244 576.028c-4.422 0-8-3.578-8-8V311.98c0-4.42 3.578-8 8-8 4.42 0 8 3.578 8 8v256.046a8 8 0 0 1-8 8.002z" fill=""></path><path d="M504.244 319.98a8 8 0 0 1-5.656-13.656l15.998-16a8 8 0 0 1 11.312 0 7.984 7.984 0 0 1 0 11.312l-15.998 16a7.972 7.972 0 0 1-5.656 2.344z" fill=""></path><path d="M504.244 319.98a7.976 7.976 0 0 1-5.656-2.344l-16-16a8 8 0 1 1 11.312-11.312l16 16a8 8 0 0 1-5.656 13.656z" fill=""></path></g></svg>
-            
-            </div>
+
+                </div>
                 <h5 class="text-xl font-bold text-blue-700 mb-2">မျှော်မှန်းချက်</h5>
                 <div class="w-10 h-1 bg-gradient-to-r from-blue-400 to-blue-600 rounded-full mb-4"></div>
                 <p class="text-gray-600 text-left" style="font-family:'Myanmar 3';">-ကုန်သွယ်မှု နှင့် စီးပွားရေးဆိုင်ရာ ဘာသာရပ်များ သင်ကြားပို့ချပေးသည့် နိုင်ငံတကာ အသိအမှတ်ပြု သင်တန်းကျောင်းဖြစ်ပေါ်လာစေရန်။</p>
@@ -459,7 +483,7 @@
     </div>
 </div>
 
-<section id="galleries" class="py-24 bg-gradient-to-br from-blue-50 via-blue-100 to-blue-50 section-fade">
+<section id="galleries" class="py-24 bg-gradient-to-br from-blue-50 via-blue-100 to-blue-50 section-fade" data-aos="fade-left">
     <div data-aos="fade-left">
         <div class="container mx-auto text-center px-4">
             <h2 class="text-4xl md:text-5xl font-extrabold text-blue-700 mb-3 tracking-tight">Our Gallery Events</h2>
@@ -487,8 +511,7 @@
     <img id="zoomedImage" class="max-w-full max-h-[90vh] rounded-lg shadow-xl" src="" alt="Zoomed Image" />
 </div>
 
-
-<section id="courses" class="py-24 bg-gradient-to-r from-blue-50 via-blue-100 to-blue-50 section-fade-right">
+<section id="courses" class="py-24 bg-gradient-to-r from-blue-50 via-blue-100 to-blue-50 section-fade-right" data-aos="fade-right">
     <div class="container mx-auto px-4">
         <div class="text-center mb-16">
             <h2 class="text-4xl md:text-5xl font-extrabold text-blue-700 mb-3 tracking-tight">Our Courses</h2>
@@ -549,7 +572,7 @@
     </div>
 </section>
 
-<section id="contact" class="py-24 bg-gradient-to-br from-blue-50 via-white to-blue-100 section-fade">
+<section id="contact" class="py-24 bg-gradient-to-br from-blue-50 via-white to-blue-100 section-fade" data-aos="fade-right">
     <div class="container mx-auto px-4">
         <div class="text-center mb-16">
             <h2 class="text-4xl md:text-5xl font-extrabold text-blue-700 mb-3 tracking-tight">Contact Us</h2>
@@ -575,7 +598,7 @@
                 </form>
             </div>
             <div class="rounded-2xl overflow-hidden shadow-lg h-[420px] section-fade-right" data-aos="fade-left">
-                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3819.336183313063!2d96.1287955!3d16.8093863!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x30c1ec252d6a5043%3A0x6b2b7b0e1b0b0b0!2sTrade%20Training%20Institute!5e0!3m2!1sen!2smm!4v1716358362615!5m2!1sen!2smm" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+               <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3820.1037290207796!2d96.15231927419526!3d16.77151412025685!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x30c1ec7fb6cffff9%3A0xd6cc55c1a9a3073f!2sTrade%20Training%20Institute!5e0!3m2!1sen!2smm!4v1748272738105!5m2!1sen!2smm" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
             </div>
         </div>
     </div>
