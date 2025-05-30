@@ -23,13 +23,27 @@
             <h2 class="text-xl text-primary mb-4">{{ $galleryId ? 'Edit Gallery' : 'Upload Gallery Image' }}</h2>
             <form wire:submit.prevent="save" enctype="multipart/form-data">
                 <div class="space-y-4">
+                     {{-- Image Input and Previews --}}
                     <div>
                         <label for="file" class="block font-medium">Image</label>
                         <input wire:model="file" id="file" type="file" accept="image/*"
                             class="w-full border border-gray-300 rounded-md p-2">
                         @error('file') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
-                    </div>
 
+                        {{-- Display New Image Preview (if a new file is selected) --}}
+                        @if ($file)
+                            <div class="mt-2">
+                                <p class="text-gray-600 text-sm">New Image Preview:</p>
+                                <img src="{{ $file->temporaryUrl() }}" class="mt-1 w-32 h-32 object-cover rounded shadow" alt="New Image Preview">
+                            </div>
+                        {{-- Display Current Image (if in edit mode and no new file selected) --}}
+                        @elseif ($currentImage)
+                            <div class="mt-2">
+                                <p class="text-gray-600 text-sm">Current Image:</p>
+                                <img src="{{ Storage::url($currentImage) }}" class="mt-1 w-32 h-32 object-cover rounded shadow" alt="Current Image">
+                            </div>
+                        @endif
+                    </div>
                     <div>
                         <label for="description" class="block font-medium">Description</label>
                         <input wire:model="description" id="description" type="text"

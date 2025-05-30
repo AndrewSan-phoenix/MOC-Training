@@ -24,7 +24,11 @@ class BatchChart extends Component
             ->take(5)
             ->get();
 
-        $this->labels = $batches->pluck('name')->toArray();
+        // Generate labels as "Batch Name (Course Name)"
+        $this->labels = $batches->map(function ($batch) {
+            return ' (' . ($batch->course ? $batch->course->name : 'N/A') . ')' . $batch->name;
+        })->toArray();
+        
         $this->dataset = [
             [
                 'label' => 'Enrollments',
@@ -35,15 +39,15 @@ class BatchChart extends Component
             ],
         ];
 
-        //Teachers
-        $teachers = Teacher::all();
-        $this->teacherLabels = $teachers->pluck('name')->toArray();
-        $this->teacherData = $teachers->pluck('teachers_count')->toArray();
+        // //Teachers
+        // $teachers = Teacher::all();
+        // $this->teacherLabels = $teachers->pluck('name')->toArray();
+        // $this->teacherData = $teachers->pluck('teachers_count')->toArray();
 
-        // Students
-        $students = Student::all();
-        $this->studentLabels = $students->pluck('batch.name')->toArray();
-        $this->studentData = $students->pluck('enrollments_count')->toArray();
+        // // Students
+        // $students = Student::all();
+        // $this->studentLabels = $students->pluck('batch.name')->toArray();
+        // $this->studentData = $students->pluck('enrollments_count')->toArray();
 
        
     }

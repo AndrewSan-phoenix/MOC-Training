@@ -3,7 +3,6 @@
 <div class="container mx-auto p-4">
     <h1 class="text-2xl mb-6">Teacher Management</h1>
 
-    <!-- Notification -->
     <div x-data="{ message: '' }" x-init="
         window.addEventListener('notify', event => {
             message = event.detail.message;
@@ -13,7 +12,6 @@
         <div x-show="message" x-transition class="bg-info text-light p-4 rounded-md mb-4" x-text="message"></div>
     </div>
 
-    <!-- Add Teacher Button -->
     <div class="mb-6">
         <button wire:click="openModal" class="bg-info text-light px-4 py-2 rounded-md hover:bg-primary transition-colors">
             Add Teacher
@@ -26,28 +24,34 @@
     </button>
     </div>
 
-    <!-- Export Button
-<div class="mb-4 flex justify-end">
-    
-</div> -->
-
-    <!-- Modal -->
     <div x-data="{ open: @entangle('showModal') }" x-show="open" x-cloak
          class="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center z-50">
         <div class="bg-light rounded-md p-6 w-full max-w-2xl max-h-[80vh] overflow-y-auto">
             <h2 class="text-xl text-primary mb-4">{{ $teacherId ? 'Edit Teacher' : 'Add Teacher' }}</h2>
             <form wire:submit="save">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                        <label for="profile_image">Profile Image</label>
-                        <input wire:model="profile_image" id="profile_image" type="file" accept="image/*" class="w-full border-gray-300 rounded-md p-2">
-                        @if ($existingProfileImage)
+                
+                        <div>
+                        <label for="profile_image" class="block font-medium">Profile Image</label>
+                        <input wire:model="profile_image" id="profile_image" type="file" accept="image/*"
+                            class="w-full border border-gray-300 rounded-md p-2">
+                        @error('profile_image') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+
+                        {{-- Display New Image Preview (if a new file is selected) --}}
+                        @if ($profile_image)
                             <div class="mt-2">
-                                <img src="{{ Storage::url($existingProfileImage) }}" alt="Profile Image" class="w-20 h-20 rounded-full">
+                                <p class="text-gray-600 text-sm">New Image Preview:</p>
+                                <img src="{{ $profile_image->temporaryUrl() }}" class="mt-1 w-32 h-32 object-cover rounded shadow" alt="New Image Preview">
+                            </div>
+                        {{-- Display Current Image (if in edit mode and no new file selected) --}}
+                        @elseif ($existingProfileImage)
+                            <div class="mt-2">
+                                <p class="text-gray-600 text-sm">Current Image:</p>
+                                <img src="{{ Storage::url($existingProfileImage) }}" class="mt-1 w-32 h-32 object-cover rounded shadow" alt="Current Image">
                             </div>
                         @endif
-                        @error('profile_image') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
                     </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div data-flux-field>
                         <label data-flux-label for="name">Name</label>
                         <input wire:model="name" id="name" type="text" data-flux-control class="w-full border-gray-300 rounded-md p-2">
@@ -111,11 +115,10 @@
         </div>
     </div>
 
-    <!-- Teachers Table -->
-    <livewire:custom-table wire:key="teachers-{{ $teachers->count() }}-{{ $teachers->pluck('id')->join('-') }}"
+    <livewire:custom-table wire:key="teachers-{{ $teachers->count() }}-{{ $teachers->pluck('id')->join('-') }}--{{ $refreshKey }}"
         :config="[
             'columns' => [
-                ['label' => 'ID', 'key' => 'id'],
+                
                 ['label' => 'Profile Image', 'key' => 'profile_image'],
                 ['label' => 'Name', 'key' => 'name'],
                 ['label' => 'DOB', 'key' => 'dob'],
@@ -125,6 +128,8 @@
                 ['label' => 'Organization', 'key' => 'organization'],
                 ['label' => 'Email', 'key' => 'email'],
                 ['label' => 'Phone', 'key' => 'phone'],
+                ['label' => 'Address', 'key' => 'address'],
+
             ],
             'data' => $data,
             'actions' => [
@@ -143,8 +148,7 @@
             ],
             'emptyMessage' => 'No teachers found.'
         ]" />
-         <!-- Pagination Links -->
-    @if ($teachers instanceof \Illuminate\Pagination\LengthAwarePaginator)
+        @if ($teachers instanceof \Illuminate\Pagination\LengthAwarePaginator)
         <div class="mt-4">
             {{ $teachers->links('components.pagination-links') }}
         </div>

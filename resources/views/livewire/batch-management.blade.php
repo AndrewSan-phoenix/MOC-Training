@@ -84,7 +84,7 @@
         </div>
     </div>
 
-    <livewire:custom-table wire:key="batches-{{ $batches->count() }}-{{ $batches->pluck('id')->join('-') }}"
+    <livewire:custom-table wire:key="batches-{{ $batches->count() }}-{{ $batches->pluck('id')->join('-') }}--{{ $refreshKey }}"
     :config="[
         'columns' => [
             ['label' => 'Name', 'key' => 'name'],

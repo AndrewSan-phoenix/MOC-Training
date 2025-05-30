@@ -38,7 +38,7 @@
                         <select wire:model="batch_id" id="batch_id" data-flux-control class="w-full border-gray-300 rounded-md p-2">
                             <option value="">Select Batch</option>
                             @foreach ($batches as $batch)
-                                <option value="{{ $batch->id }}">{{ $batch->name }}</option>
+                                <option value="{{ $batch->id }}"> {{ $batch->course->name ?? 'No Course' }} - {{ $batch->name }}</option>
                             @endforeach
                         </select>
                         @error('batch_id') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
@@ -80,7 +80,7 @@
     </div>
 
     <!-- Batches Table -->
-    <livewire:custom-table wire:key="batchdetails-{{ $batchdetails->count() }}-{{ $batchdetails->pluck('id')->join('-') }}"
+    <livewire:custom-table wire:key="batchdetails-{{ $batchdetails->count() }}-{{ $batchdetails->pluck('id')->join('-') }}--{{ $refreshKey }}"
         :config="[
             'columns' => [
                 ['label' => 'Batch', 'key' => 'batch_course'],

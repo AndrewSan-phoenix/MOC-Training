@@ -15,6 +15,7 @@ class CourseManagement extends Component
 
     public $courseId = null;
     public $showModal = false;
+     public $refreshKey = 0; // Used to force UI refresh
 
     #[Validate('required|string|max:255')]
     public $name = '';
@@ -35,6 +36,7 @@ class CourseManagement extends Component
         $this->validate();
 
         $data = ['name' => $this->name];
+        $msg = $this->courseId ? 'Course updated successfully!' : 'Course created successfully!';
 
         if ($this->courseId) {
             $course = Course::findOrFail($this->courseId);
@@ -44,7 +46,10 @@ class CourseManagement extends Component
         }
 
         $this->closeModal();
-        $this->dispatch('notify', message: $this->courseId ? 'Course updated successfully!' : 'Course created successfully!');
+        $this->resetPage(); // Reset to first page after save
+        $this->refreshKey++; // Force UI refresh
+
+        $this->dispatch('notify', message: $msg);
     }
 
     #[On('edit-course')]
@@ -60,6 +65,8 @@ class CourseManagement extends Component
     public function delete($id)
     {
         Course::findOrFail($id)->delete();
+        $this->resetPage();
+        $this->refreshKey++; // Force UI refresh
         $this->dispatch('notify', message: 'Course deleted successfully!');
     }
 
@@ -99,7 +106,11 @@ public function export(): StreamedResponse
     {
         $courses = Course::paginate(5);
         $data = $courses->items();
-
-        return view('livewire.course-management', compact('courses', 'data'));
+         return view('livewire.course-management', [
+            'courses' => $courses,
+            'data'=>$data,
+            'refreshKey' => $this->refreshKey,
+        ]);
     }
+    
 }

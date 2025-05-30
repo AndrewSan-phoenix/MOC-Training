@@ -40,7 +40,7 @@
                             <span class="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
                             Currently Teaching
                         </span> -->
-                        <a href="#" class="text-blue-600 hover:text-blue-800 font-medium text-sm">View Details →</a>
+                        <!-- <a href="#" class="text-blue-600 hover:text-blue-800 font-medium text-sm">View Details →</a> -->
                     </div>
                 </div>
             </div>
@@ -58,7 +58,7 @@
                     </div>
                     <p class="text-gray-600 mb-4">Master financial analysis techniques for informed business decisions.</p>
                     <div class="flex justify-between items-center">
-                        <a href="#" class="text-blue-600 hover:text-blue-800 font-medium text-sm">View Details →</a>
+                        <!-- <a href="#" class="text-blue-600 hover:text-blue-800 font-medium text-sm">View Details →</a> -->
                     </div>
                 </div>
             </div>
@@ -76,7 +76,7 @@
                     </div>
                     <p class="text-gray-600 mb-4">Learn modern digital marketing strategies to grow your business online.</p>
                     <div class="flex justify-between items-center">
-                        <a href="#" class="text-blue-600 hover:text-blue-800 font-medium text-sm">View Details →</a>
+                        <!-- <a href="#" class="text-blue-600 hover:text-blue-800 font-medium text-sm">View Details →</a> -->
                     </div>
                 </div>
             </div>
@@ -94,7 +94,7 @@
                     </div>
                     <p class="text-gray-600 mb-4">Develop essential leadership skills to effectively manage teams.</p>
                     <div class="flex justify-between items-center">
-                        <a href="#" class="text-blue-600 hover:text-blue-800 font-medium text-sm">View Details →</a>
+                        <!-- <a href="#" class="text-blue-600 hover:text-blue-800 font-medium text-sm">View Details →</a> -->
                     </div>
                 </div>
             </div>

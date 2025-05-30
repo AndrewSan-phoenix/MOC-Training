@@ -107,7 +107,7 @@
         width: 80vw !important; /* Start very wide on small screens */
         max-width: 420px !important; /* Cap width for active slide */
         height: 200px !important; /* Larger height for active slide */
-        z-index: 10; /* Bring active slide to front */
+        z-index: 20; /* Bring active slide to front */
         filter: none; /* Remove filters */
         opacity: 1;
         box-shadow: 0 20px 48px 0 rgba(37,99,235,0.25);
@@ -414,7 +414,7 @@
     document.addEventListener('DOMContentLoaded', typeEffect);
 </script>
 
-<section class="hero-bg relative flex items-center justify-center " data-aos="fade-right">
+<section class="hero-bg relative flex items-center justify-center w-screen" data-aos="fade-right">
     <img src="{{ asset('images/main.png') }}" alt="Office" class="absolute inset-0 w-full h-full object-cover opacity-80 scale-105 transition-transform duration-10000 hover:scale-110" style="z-index:2;">
     <div class="absolute inset-0 bg-gradient-to-br from-blue-900/80 via-white-800/60 to-black-700/40" style="z-index:3;"></div>
     <svg class="hero-wave" viewBox="0 0 1440 320"><path fill="#fff" fill-opacity="1" d="M0,224L48,213.3C96,203,192,181,288,192C384,203,480,245,576,240C672,235,768,181,864,176C960,171,1056,213,1152,197.3C1248,181,1344,107,1392,69.3L1440,32L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>

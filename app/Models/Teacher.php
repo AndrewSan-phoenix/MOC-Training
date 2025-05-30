@@ -7,14 +7,17 @@ class Teacher extends Model
 {
     protected $fillable = [
         'name',
+        'dob',
+        'gender',      
+        'nrc', 
+        'position',
+        'organization',
         'email',
         'phone',
         'address',
         'profile_image',
-        'organization',
-        'dob',
-        'gender',      // <-- add this
-        'nrc',         // <-- and any other fields you use
+       
+             
     ];
 
     public function batchDetails()

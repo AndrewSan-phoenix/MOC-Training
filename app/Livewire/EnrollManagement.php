@@ -18,7 +18,9 @@ class EnrollManagement extends Component
 
     public $batches, $students;
     public $enrollId = null;
+    public $refreshKey = 0; // Used to force UI refresh
     public $showModal = false;
+
 
     #[Validate('required|exists:batches,id')]
     public $batch_id = '';
@@ -94,6 +96,9 @@ class EnrollManagement extends Component
         }
 
         $this->closeModal();
+        $this->resetPage(); // Reset to first page after save
+        $this->refreshKey++; // Force UI refresh
+
     }
 
     #[On('edit-enroll')]
@@ -111,6 +116,10 @@ class EnrollManagement extends Component
     public function delete($id)
     {
         Enroll::findOrFail($id)->delete();
+         $this->closeModal();
+        $this->resetPage(); // Reset to first page after save
+        $this->refreshKey++; // Force UI refresh
+
         $this->dispatch('notify', message: 'Enrollment deleted successfully!');
     }
 
@@ -123,43 +132,44 @@ class EnrollManagement extends Component
         $this->resetValidation(); // Clear validation errors
     }
 
-    // public function export(): StreamedResponse
-    // {
-    //     $filename = 'enrolls_' . now()->format('Y-m-d_H-i-s') . '.csv';
+    public function export(): StreamedResponse
+    {
+        $filename = 'enrolls_' . now()->format('Y-m-d_H-i-s') . '.csv';
 
-    //     return response()->streamDownload(function () {
-    //         $handle = fopen('php://output', 'w');
+        return response()->streamDownload(function () {
+            $handle = fopen('php://output', 'w');
 
-    //         // Header row
-    //         fputcsv($handle, [
-    //             'ID',
-    //             'Course Name',
-    //             'Batch Name',
-    //             'Student Name',
-    //             'Enroll Date',
-    //         ]);
+            // Header row
+            fputcsv($handle, [
+                'ID',
+                'Course Name',
+                'Batch Name',
+                'Student Name',
+                'Enroll Date',
+            ]);
 
-    //         // Data rows
-    //         // Corrected: Eager load necessary relations for export
-    //         Enroll::with(['batch.course', 'student'])->cursor()->each(function ($enroll) use ($handle) {
-    //             fputcsv($handle, [
-    //                 $enroll->id,
-    //                 optional(optional($enroll->batch)->course)->name, // Safely access course name
-    //                 optional($enroll->batch)->name,
-    //                 optional($enroll->student)->name,
-    //                 $enroll->enroll_date,
-    //             ]);
-    //         });
+            // Data rows
+            // Corrected: Eager load necessary relations for export
+            Enroll::with(['batch.course', 'student'])->cursor()->each(function ($enroll) use ($handle) {
+                fputcsv($handle, [
+                    $enroll->id,
+                    optional(optional($enroll->batch)->course)->name, // Safely access course name
+                    optional($enroll->batch)->name,
+                    optional($enroll->student)->name,
+                    $enroll->enroll_date,
+                ]);
+            });
 
-    //         fclose($handle);
-    //     }, $filename);
-    // }
+            fclose($handle);
+        }, $filename);
+    }
 
     public function render()
     {
         // Eager load batch.course for table display
         return view('livewire.enroll-management', [
             'enrollments' => Enroll::with(['batch.course', 'student'])->latest()->paginate(5),
+            'refreshKey' => $this->refreshKey,
         ]);
     }
 }

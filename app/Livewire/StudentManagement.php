@@ -184,7 +184,7 @@ public function export(): StreamedResponse
 
     public function render()
     {
-        $students = Student::paginate(10);
+        $students = Student::paginate(6);
         $data = $students->items();
         return view('livewire.student-management', compact('students', 'data'));
     }

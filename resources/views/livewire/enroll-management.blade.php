@@ -75,7 +75,7 @@
     </div>
 
     <!-- Enrollments Table -->
-    <livewire:custom-table wire:key="enrollments-{{ $enrollments->count() }}-{{ $enrollments->pluck('id')->join('-') }}"
+    <livewire:custom-table wire:key="enrollments-{{ $enrollments->count() }}-{{ $enrollments->pluck('id')->join('-') }}--{{ $refreshKey }}"
         :config="[
             'columns' => [
                 ['label' => 'Batch', 'key' => 'batch_course'],

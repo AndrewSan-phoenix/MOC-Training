@@ -20,6 +20,7 @@ class BatchDetailsManagement extends Component
     public $lecturetitle;
     public $batchdetailsId = null;
     public $showModal = false;
+    public $refreshKey = 0; // Used to force UI refresh
 
     #[Validate('required|exists:batches,id')]
     public $batch_id = '';
@@ -67,6 +68,7 @@ class BatchDetailsManagement extends Component
             'lecture_date' => $this->lecture_date,
             'lecture_title' => $this->lecture_title,
         ];
+         $msg = $this->batchdetailsId ? 'Batch Details updated successfully!' : 'Batch Details created successfully!';
 
         if ($this->batchdetailsId) {
             $batchdetails = BatchDetail::findOrFail($this->batchdetailsId);
@@ -77,7 +79,7 @@ class BatchDetailsManagement extends Component
 
         $this->closeModal();
         $this->resetPage();
-        $this->dispatch('notify', message: $this->batchdetailsId ? 'Batch updated successfully!' : 'Batch created successfully!');
+        $this->dispatch('notify', message: $msg);
     }
 
     #[On('edit-batchdetails')]
@@ -95,8 +97,9 @@ class BatchDetailsManagement extends Component
     #[On('delete-batchdetails')]
     public function delete($id)
     {
-        BatchDetail::findOrFail($id)->delete();
-        $this->resetPage();
+         $this->closeModal();
+        $this->resetPage(); // Reset to first page after save
+        $this->refreshKey++; // Force UI refresh
         $this->dispatch('notify', message: 'Batch deleted successfully!');
     }
 
@@ -144,7 +147,9 @@ public function export(): StreamedResponse
     public function render()
     {
         return view('livewire.batch-details-management', [
-            'batchdetails' => BatchDetail::with('batch.course', 'teacher')->latest()->paginate(5)
+            'batchdetails' => BatchDetail::with('batch.course', 'teacher')->latest()->paginate(5),
+            'refreshKey' => $this->refreshKey,
+
         ]);
     }
 }

@@ -89,18 +89,18 @@ class TeacherManagement extends Component
         }
 
         $msg = $this->teacherId ? 'Teacher updated successfully!' : 'Teacher created successfully!';
-        if ($this->teacherId) {
-            // Update existing teacher
-            $teacher = Teacher::findOrFail($this->teacherId);
-            $teacher->update($data);
-        } else {
-            // Create new teacher
-            Teacher::create($data);
-        }
+       if ($this->teacherId) {
+    // Update existing teacher
+    $teacher = Teacher::findOrFail($this->teacherId);
+    $teacher->update($data);
+} else {
+    // Create new teacher
+    Teacher::create($data);
+}
 
         $this->closeModal();
         $this->resetPage(); // Reset to first page after save
-        // $this->refreshKey = rand(1000, 9999); // Force UI refresh
+        $this->refreshKey++; // Force UI refresh
 
         $this->dispatch('notify', message: $msg);
     }
@@ -135,7 +135,7 @@ class TeacherManagement extends Component
 
         $teacher->delete();
         $this->resetPage();
-        $this->refreshKey = rand(1000, 9999); // Force UI refresh
+        $this->refreshKey++; // Force UI refresh
         $this->dispatch('notify', message: 'Teacher deleted successfully!');
     }
 
@@ -168,7 +168,7 @@ class TeacherManagement extends Component
             // Data rows
             Teacher::cursor()->each(function ($teacher) use ($handle) {
                 fputcsv($handle, [
-                    $teacher->id,
+                 
                     $teacher->name,
                     $teacher->position,
                     $teacher->organization,
@@ -189,6 +189,10 @@ class TeacherManagement extends Component
     {
         $teachers = Teacher::paginate(5);
         $data = $teachers->items();
-        return view('livewire.teacher-management', compact('teachers', 'data'));
+         return view('livewire.teacher-management', [
+            'teachers' => $teachers,
+            'data'=>$data,
+            'refreshKey' => $this->refreshKey,
+        ]);
     }
 }

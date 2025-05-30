@@ -16,6 +16,7 @@ class BatchManagement extends Component
 
     public $courses;
     public $batchId = null;
+    public $refreshKey = 0; // Used to force UI refresh
     public $showModal = false;
 
     #[Validate('required|string|max:255')]
@@ -69,6 +70,7 @@ class BatchManagement extends Component
             'end_date' => $this->end_date,
             'fees' => $this->fees,
         ];
+          $msg = $this->batchId ? 'Batch updated successfully!' : 'Batch created successfully!';
 
         if ($this->batchId) {
             Batch::findOrFail($this->batchId)->update($data);
@@ -77,7 +79,10 @@ class BatchManagement extends Component
         }
 
         $this->closeModal();
-        $this->dispatch('notify', message: $this->batchId ? 'Batch updated successfully!' : 'Batch created successfully!');
+        $this->resetPage(); // Reset to first page after save
+        $this->refreshKey++; // Force UI refresh
+
+        $this->dispatch('notify', message: $msg);
     }
 
     #[On('edit-batch')]
@@ -98,6 +103,11 @@ class BatchManagement extends Component
     public function delete($id)
     {
         Batch::findOrFail($id)->delete();
+         $this->closeModal();
+
+        $this->resetPage(); // Reset to first page after save
+        $this->refreshKey++; // Force UI refresh
+
         $this->dispatch('notify', message: 'Batch deleted successfully!');
     }
 
@@ -153,6 +163,7 @@ public function export(): StreamedResponse
     {
         return view('livewire.batch-management', [
             'batches' => Batch::with('course')->paginate(5),
+            'refreshKey' => $this->refreshKey,
         ]);
     }
     

@@ -52,7 +52,7 @@
     </div>
 
     <!-- Courses Table -->
-    <livewire:custom-table wire:key="courses-{{ $courses->count() }}-{{ $courses->pluck('id')->join('-') }}"
+    <livewire:custom-table wire:key="courses-{{ $courses->count() }}-{{ $courses->pluck('id')->join('-') }}--{{ $refreshKey }}"
         :config="[
             'columns' => [
                 ['label' => 'Name', 'key' => 'name'],
