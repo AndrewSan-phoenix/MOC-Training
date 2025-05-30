@@ -12,4 +12,4 @@ class Gallery extends Model
     {
         return $this->belongsTo(Batch::class);
     }
-} 
+}
